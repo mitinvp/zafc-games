@@ -3,1020 +3,362 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ГРА — клуб настільних ігор ЗАФК</title>
+<title>Ігрова — ЗАФК</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Geologica:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0e0e12;--surface:#16161d;--surface2:#1e1e28;--surface3:#252535;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.15);--accent:#d4f54a;--accent2:#7b5cfa;--danger:#ff5c5c;--success:#4affa0;--text:#f0f0f0;--muted:#888;--muted2:#555;--radius:14px;--font-head:'Unbounded',sans-serif;--font-body:'Geologica',sans-serif}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.6}
+:root {
+  --bg: #0a0a0f;
+  --surface: #13131a;
+  --surface2: #1c1c26;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.15);
+  --accent: #d4f54a;
+  --text: #f0f0f0;
+  --muted: #666;
+  --muted2: #999;
+  --font-head: 'Unbounded', sans-serif;
+  --font-body: 'Geologica', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
 /* NAV */
-nav{position:sticky;top:0;z-index:100;background:rgba(14,14,18,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 clamp(16px,5vw,60px);display:flex;align-items:center;gap:20px;height:60px}
-.nav-logo{font-family:var(--font-head);font-size:18px;font-weight:900;color:var(--accent);text-decoration:none;flex-shrink:0;cursor:pointer}
-.nav-logo span{color:var(--text)}
-.nav-links{display:flex;gap:20px}
-.nav-links a{font-size:13px;font-weight:500;color:var(--muted);text-decoration:none;transition:color .2s;cursor:pointer}
-.nav-links a:hover{color:var(--text)}
-.nav-right{display:flex;align-items:center;gap:10px;margin-left:auto}
-.btn-sm{padding:6px 14px;border-radius:8px;font-family:var(--font-body);font-size:12px;font-weight:500;cursor:pointer;text-decoration:none;transition:all .2s;border:none}
-.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
-.btn-outline:hover{border-color:var(--border2)}
-.btn-accent{background:var(--accent);color:#0e0e12}
-.btn-accent:hover{opacity:.85}
-.badge-admin{background:rgba(212,245,74,0.15);border:1px solid rgba(212,245,74,0.3);color:var(--accent);font-size:10px;font-family:var(--font-head);font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:1px}
-/* PAGE */
-.page{display:none}.page.active{display:block}
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10,10,15,0.9);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 clamp(16px,5vw,60px);
+  display: flex; align-items: center; gap: 16px;
+  height: 56px;
+}
+.nav-logo {
+  font-family: var(--font-head);
+  font-size: 16px; font-weight: 900;
+  color: var(--accent);
+  text-decoration: none;
+  margin-right: auto;
+}
+.nav-logo span { color: var(--text); }
+.nav-badge {
+  font-size: 10px; font-family: var(--font-head); font-weight: 700;
+  color: var(--muted); letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
 /* HERO */
-.hero{padding:clamp(60px,10vw,120px) clamp(16px,5vw,60px) 80px;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;top:-200px;right:-100px;width:600px;height:600px;background:radial-gradient(circle,rgba(123,92,250,0.15) 0%,transparent 70%);pointer-events:none}
-.hero-tag{display:inline-block;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;color:var(--accent);border:1px solid rgba(212,245,74,0.3);border-radius:20px;padding:4px 12px;margin-bottom:24px;text-transform:uppercase}
-.hero h1{font-family:var(--font-head);font-size:clamp(36px,7vw,80px);font-weight:900;line-height:1.05;letter-spacing:-2px;max-width:800px;margin-bottom:24px}
-.hero h1 em{font-style:normal;color:var(--accent)}
-.hero p{font-size:16px;color:var(--muted);max-width:480px;margin-bottom:40px;font-weight:300}
-.hero-actions{display:flex;gap:12px;flex-wrap:wrap}
-.btn-lg{padding:13px 28px;border-radius:10px;font-family:var(--font-head);font-size:13px;font-weight:700;letter-spacing:.5px;cursor:pointer;text-decoration:none;transition:opacity .2s;border:none}
-.btn-lg.accent{background:var(--accent);color:#0e0e12}.btn-lg.accent:hover{opacity:.85}
-.btn-lg.ghost{background:transparent;color:var(--text);border:1px solid var(--border)}.btn-lg.ghost:hover{border-color:var(--border2)}
-.hero-stats{display:flex;gap:40px;margin-top:64px;flex-wrap:wrap}
-.stat-num{font-family:var(--font-head);font-size:32px;font-weight:900;color:var(--accent);letter-spacing:-1px}
-.stat-label{font-size:12px;color:var(--muted);font-weight:300}
-/* SECTION */
-section{padding:60px clamp(16px,5vw,60px)}
-.section-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:32px}
-.section-title{font-family:var(--font-head);font-size:clamp(18px,3vw,26px);font-weight:700;letter-spacing:-.5px}
-.section-link{font-size:13px;color:var(--accent);text-decoration:none;font-weight:500;cursor:pointer}
-.section-link:hover{text-decoration:underline}
-/* CHIPS */
-.genre-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:32px}
-.chip{padding:6px 14px;border:1px solid var(--border);border-radius:20px;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .2s;background:transparent;font-family:var(--font-body)}
-.chip:hover,.chip.active{border-color:var(--accent);color:var(--accent);background:rgba(212,245,74,0.08)}
-/* CARDS */
-.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}
-.game-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:background .2s,transform .2s,border-color .2s;text-decoration:none;color:inherit;display:block}
-.game-card:hover{background:var(--surface2);border-color:var(--border2);transform:translateY(-3px)}
-.game-cover{width:100%;aspect-ratio:4/3;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:52px;position:relative}
-.game-badge{position:absolute;top:10px;right:10px;background:var(--accent);color:#0e0e12;font-family:var(--font-head);font-size:9px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:1px}
-.game-info{padding:14px 16px 16px}
-.game-name{font-family:var(--font-head);font-size:13px;font-weight:700;margin-bottom:6px;letter-spacing:-.3px}
-.game-meta{display:flex;gap:12px;font-size:11px;color:var(--muted)}
-.game-rating{display:flex;align-items:center;gap:4px;margin-top:10px}
-.stars{color:var(--accent);font-size:12px}
-.rating-num{font-size:12px;color:var(--muted)}
-/* PLAYERS */
-.players-list{display:flex;flex-direction:column;gap:10px}
-.player-row{display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;transition:background .2s}
-.player-row:hover{background:var(--surface2)}
-.player-rank{font-family:var(--font-head);font-size:20px;font-weight:900;color:var(--muted2);width:32px}
-.player-rank.top{color:var(--accent)}
-.player-avatar{width:38px;height:38px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:16px;border:2px solid var(--border);flex-shrink:0}
-/* NEWS */
-.news-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
-.news-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;transition:background .2s}
-.news-card:hover{background:var(--surface2)}
-.news-date{font-size:11px;color:var(--muted);margin-bottom:10px;font-family:var(--font-head);letter-spacing:.5px}
-.news-title{font-family:var(--font-head);font-size:14px;font-weight:700;line-height:1.35;margin-bottom:10px}
-.news-text{font-size:13px;color:var(--muted);line-height:1.6;font-weight:300}
+.hero {
+  padding: clamp(48px,8vw,100px) clamp(16px,5vw,60px) clamp(40px,6vw,80px);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; top: -150px; left: 50%; transform: translateX(-50%);
+  width: 700px; height: 500px;
+  background: radial-gradient(ellipse, rgba(212,245,74,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  font-family: var(--font-head); font-size: 10px; font-weight: 700;
+  letter-spacing: 3px; color: var(--accent); text-transform: uppercase;
+  margin-bottom: 20px;
+  display: flex; align-items: center; gap: 8px;
+}
+.hero-eyebrow::before {
+  content: ''; width: 24px; height: 2px; background: var(--accent);
+}
+.hero h1 {
+  font-family: var(--font-head);
+  font-size: clamp(36px,7vw,80px);
+  font-weight: 900; letter-spacing: -2px; line-height: 1.0;
+  margin-bottom: 20px;
+}
+.hero h1 em { font-style: normal; color: var(--accent); }
+.hero p {
+  font-size: 15px; color: var(--muted2); font-weight: 300;
+  max-width: 440px; line-height: 1.7;
+}
+
+/* GAMES SECTION */
+.games-section {
+  padding: 0 clamp(16px,5vw,60px) 80px;
+}
+.section-label {
+  font-family: var(--font-head); font-size: 10px; font-weight: 700;
+  letter-spacing: 2px; color: var(--muted); text-transform: uppercase;
+  margin-bottom: 24px;
+  display: flex; align-items: center; gap: 12px;
+}
+.section-label::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+/* GAME CARD */
+.game-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  transition: transform .2s, border-color .2s, box-shadow .2s;
+  position: relative;
+}
+.game-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--border2);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+.game-card.coming-soon {
+  cursor: default;
+  pointer-events: none;
+}
+.game-card-cover {
+  height: 160px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 72px;
+  position: relative;
+  overflow: hidden;
+}
+.game-card.uno .game-card-cover {
+  background: linear-gradient(135deg, #1a0a0f 0%, #2d0a15 50%, #1a0510 100%);
+}
+.game-card.alias .game-card-cover {
+  background: linear-gradient(135deg, #0a0f1a 0%, #0a1530 100%);
+}
+.game-card.codenames .game-card-cover {
+  background: linear-gradient(135deg, #0f0f0a 0%, #1a1a05 100%);
+}
+.game-card.dobble .game-card-cover {
+  background: linear-gradient(135deg, #0a1a10 0%, #051a0f 100%);
+}
+.cover-glow {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 60%, rgba(255,255,255,0.04) 0%, transparent 70%);
+}
+.cover-emoji {
+  position: relative; z-index: 1;
+  filter: drop-shadow(0 8px 24px rgba(0,0,0,0.6));
+  transition: transform .3s;
+}
+.game-card:hover .cover-emoji { transform: scale(1.1) rotate(-3deg); }
+
+.game-card-body { padding: 20px; }
+.game-card-header {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 12px;
+  margin-bottom: 8px;
+}
+.game-card-name {
+  font-family: var(--font-head);
+  font-size: 18px; font-weight: 900;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+.game-status {
+  font-family: var(--font-head); font-size: 9px; font-weight: 700;
+  letter-spacing: 1px; padding: 4px 10px; border-radius: 20px;
+  white-space: nowrap; flex-shrink: 0;
+  text-transform: uppercase;
+}
+.game-status.live {
+  background: rgba(212,245,74,0.15);
+  color: var(--accent);
+  border: 1px solid rgba(212,245,74,0.3);
+}
+.game-status.soon {
+  background: var(--surface2);
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+.game-card-desc {
+  font-size: 13px; color: var(--muted2); font-weight: 300; line-height: 1.6;
+  margin-bottom: 16px;
+}
+.game-card-meta {
+  display: flex; gap: 16px; flex-wrap: wrap;
+}
+.meta-item {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; color: var(--muted); font-weight: 500;
+}
+.meta-icon { font-size: 13px; }
+
+.game-card-cta {
+  margin-top: 16px;
+  padding: 10px;
+  background: var(--accent);
+  border-radius: 10px;
+  text-align: center;
+  font-family: var(--font-head);
+  font-size: 12px; font-weight: 700;
+  color: #0a0a0f;
+  letter-spacing: 0.5px;
+  transition: opacity .2s;
+}
+.game-card:hover .game-card-cta { opacity: 0.85; }
+.game-card-cta.disabled {
+  background: var(--surface2);
+  color: var(--muted);
+  cursor: default;
+}
+
+/* COMING SOON overlay */
+.soon-overlay {
+  position: absolute; inset: 0;
+  background: rgba(10,10,15,0.5);
+  backdrop-filter: blur(2px);
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 18px;
+}
+.soon-badge {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-family: var(--font-head);
+  font-size: 11px; font-weight: 700;
+  color: var(--muted2);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
 /* FOOTER */
-footer{border-top:1px solid var(--border);padding:32px clamp(16px,5vw,60px);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
-.footer-logo{font-family:var(--font-head);font-size:14px;font-weight:900;color:var(--accent)}
-footer p{font-size:12px;color:var(--muted)}
-/* CATALOG */
-.catalog-header{padding:48px clamp(16px,5vw,60px) 0}
-.catalog-header h1{font-family:var(--font-head);font-size:clamp(26px,5vw,48px);font-weight:900;letter-spacing:-1px;margin-bottom:8px}
-.catalog-header p{font-size:14px;color:var(--muted);font-weight:300}
-.catalog-controls{padding:20px clamp(16px,5vw,60px);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.search-box{flex:1;min-width:180px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 14px;font-family:var(--font-body);font-size:14px;color:var(--text);outline:none;transition:border-color .2s}
-.search-box:focus{border-color:var(--accent)}
-.search-box::placeholder{color:var(--muted)}
-select.filter-select{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 14px;font-family:var(--font-body);font-size:13px;color:var(--text);outline:none;cursor:pointer;-webkit-appearance:none}
-select.filter-select:focus{border-color:var(--accent)}
-.catalog-grid{padding:0 clamp(16px,5vw,60px) 60px;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}
-/* GAME PAGE */
-.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);background:transparent;border:none;cursor:pointer;padding:clamp(16px,3vw,32px) clamp(16px,5vw,60px) 0;font-family:var(--font-body);transition:color .2s}
-.back-btn:hover{color:var(--text)}
-.game-page-header{padding:32px clamp(16px,5vw,60px) 0;display:flex;gap:40px;align-items:flex-start;flex-wrap:wrap}
-.game-page-cover{width:clamp(140px,22vw,200px);aspect-ratio:1;border-radius:var(--radius);background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:64px;border:1px solid var(--border);flex-shrink:0}
-.game-page-info{flex:1;min-width:200px}
-.game-page-info h1{font-family:var(--font-head);font-size:clamp(22px,4vw,40px);font-weight:900;letter-spacing:-1px;margin-bottom:12px}
-.game-tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-.tag{padding:4px 10px;border:1px solid var(--border);border-radius:20px;font-size:11px;color:var(--muted)}
-.game-page-desc{font-size:14px;color:var(--muted);font-weight:300;line-height:1.7;max-width:520px;margin-bottom:20px}
-.game-page-props{display:flex;gap:24px;flex-wrap:wrap}
-.prop-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-family:var(--font-head)}
-.prop-val{font-size:16px;font-weight:500}
-.game-page-body{padding:40px clamp(16px,5vw,60px) 60px;display:grid;grid-template-columns:1fr minmax(240px,280px);gap:32px}
-@media(max-width:700px){.game-page-body{grid-template-columns:1fr}}
-.rules-block h2,.reviews-sidebar h2{font-family:var(--font-head);font-size:16px;font-weight:700;margin-bottom:16px}
-.rules-text{font-size:14px;color:var(--muted);font-weight:300;line-height:1.8}
-.rules-text p{margin-bottom:12px}
-.review-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px}
-.review-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.review-avatar{width:28px;height:28px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
-.review-name{font-size:12px;font-weight:500}
-.review-date{font-size:11px;color:var(--muted);margin-left:auto}
-.review-text{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6}
-.review-form textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-family:var(--font-body);font-size:13px;color:var(--text);outline:none;resize:vertical;min-height:80px;margin-bottom:10px;transition:border-color .2s}
-.review-form textarea:focus{border-color:var(--accent)}
-.review-form textarea::placeholder{color:var(--muted)}
-/* AUTH MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);z-index:200;align-items:center;justify-content:center;padding:20px}
-.modal-overlay.open{display:flex}
-.modal{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:36px;width:100%;max-width:400px;position:relative;animation:modalIn .25s ease}
-@keyframes modalIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-.modal-close{position:absolute;top:14px;right:14px;background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:4px;transition:color .2s}
-.modal-close:hover{color:var(--text)}
-.modal-logo{font-family:var(--font-head);font-size:20px;font-weight:900;color:var(--accent);margin-bottom:6px}
-.modal-sub{font-size:13px;color:var(--muted);margin-bottom:24px;font-weight:300}
-.modal label{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:5px;letter-spacing:.5px;text-transform:uppercase;font-family:var(--font-head)}
-.modal input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:var(--font-body);font-size:14px;color:var(--text);margin-bottom:14px;transition:border-color .2s;outline:none}
-.modal input:focus{border-color:var(--accent)}
-.modal input::placeholder{color:var(--muted)}
-.domain-hint{font-size:11px;color:var(--muted);margin-top:-10px;margin-bottom:14px}
-.domain-hint b{color:var(--accent)}
-.modal-btn{width:100%;padding:12px;background:var(--accent);color:#0e0e12;border:none;border-radius:8px;font-family:var(--font-head);font-size:13px;font-weight:700;cursor:pointer;transition:opacity .2s;margin-top:4px}
-.modal-btn:hover{opacity:.85}
-.modal-switch{text-align:center;margin-top:18px;font-size:13px;color:var(--muted)}
-.modal-switch a{color:var(--accent);cursor:pointer}
-.modal-switch a:hover{text-decoration:underline}
-.error-msg{background:rgba(255,92,92,0.1);border:1px solid rgba(255,92,92,0.3);color:var(--danger);border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
-/* ADMIN */
-.admin-layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 60px)}
-@media(max-width:768px){.admin-layout{grid-template-columns:1fr}}
-.admin-sidebar{background:var(--surface);border-right:1px solid var(--border);padding:24px 0}
-.admin-sidebar-title{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--muted);letter-spacing:2px;padding:0 20px;margin-bottom:12px;text-transform:uppercase}
-.admin-nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .2s;border-left:2px solid transparent}
-.admin-nav-item:hover{color:var(--text);background:var(--surface2)}
-.admin-nav-item.active{color:var(--accent);border-left-color:var(--accent);background:rgba(212,245,74,0.05)}
-.admin-nav-icon{font-size:16px;width:20px;text-align:center}
-.admin-content{padding:32px clamp(16px,4vw,40px)}
-.admin-content-inner{display:none}
-.admin-content-inner.active{display:block}
-.admin-page-title{font-family:var(--font-head);font-size:clamp(20px,3vw,28px);font-weight:900;letter-spacing:-.5px;margin-bottom:8px}
-.admin-page-sub{font-size:13px;color:var(--muted);font-weight:300;margin-bottom:28px}
-.admin-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:32px}
-.admin-stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
-.admin-stat-num{font-family:var(--font-head);font-size:28px;font-weight:900;color:var(--accent);margin-bottom:4px}
-.admin-stat-label{font-size:12px;color:var(--muted);font-weight:300}
-.admin-table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:24px;overflow-x:auto}
-.admin-table-header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border)}
-.admin-table-title{font-family:var(--font-head);font-size:14px;font-weight:700}
-table{width:100%;border-collapse:collapse;min-width:480px}
-th{text-align:left;padding:10px 16px;font-size:11px;font-family:var(--font-head);font-weight:700;color:var(--muted);letter-spacing:.5px;border-bottom:1px solid var(--border);text-transform:uppercase;white-space:nowrap}
-td{padding:12px 16px;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:var(--surface2)}
-.td-genre{display:inline-block;padding:2px 8px;border:1px solid var(--border);border-radius:20px;font-size:11px;color:var(--muted)}
-.td-actions{display:flex;gap:8px}
-.btn-edit{padding:5px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:12px;color:var(--text);cursor:pointer;font-family:var(--font-body);transition:border-color .2s}
-.btn-edit:hover{border-color:var(--border2)}
-.btn-del{padding:5px 12px;background:rgba(255,92,92,0.1);border:1px solid rgba(255,92,92,0.2);border-radius:6px;font-size:12px;color:var(--danger);cursor:pointer;font-family:var(--font-body)}
-.btn-del:hover{background:rgba(255,92,92,0.2)}
-.admin-form{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media(max-width:600px){.form-grid{grid-template-columns:1fr}}
-.form-group{display:flex;flex-direction:column;gap:6px}
-.form-group.full{grid-column:1/-1}
-.form-group label{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;font-family:var(--font-head)}
-.form-group input,.form-group select,.form-group textarea{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--font-body);font-size:13px;color:var(--text);outline:none;transition:border-color .2s;-webkit-appearance:none}
-.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--accent)}
-.form-group input::placeholder,.form-group textarea::placeholder{color:var(--muted)}
-.form-group textarea{resize:vertical;min-height:80px}
-.form-actions{display:flex;gap:10px;margin-top:20px}
-.btn-primary{padding:10px 22px;background:var(--accent);color:#0e0e12;border:none;border-radius:8px;font-family:var(--font-head);font-size:13px;font-weight:700;cursor:pointer;transition:opacity .2s}
-.btn-primary:hover{opacity:.85}
-.btn-secondary{padding:10px 22px;background:transparent;color:var(--text);border:1px solid var(--border);border-radius:8px;font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer}
-.btn-secondary:hover{border-color:var(--border2)}
-.news-admin-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 20px;display:flex;gap:16px;align-items:flex-start;margin-bottom:10px}
-.news-admin-body{flex:1}
-.news-admin-title{font-family:var(--font-head);font-size:13px;font-weight:700;margin-bottom:4px}
-.news-admin-text{font-size:12px;color:var(--muted);font-weight:300}
-.news-admin-date{font-size:11px;color:var(--muted2);margin-top:4px}
-.user-tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-family:var(--font-head);font-weight:700;letter-spacing:.5px}
-.user-tag.admin{background:rgba(212,245,74,0.15);color:var(--accent);border:1px solid rgba(212,245,74,0.3)}
-.user-tag.user{background:var(--surface2);color:var(--muted);border:1px solid var(--border)}
-.success-toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid rgba(74,255,160,0.4);border-radius:10px;padding:14px 18px;font-size:13px;color:var(--success);display:flex;align-items:center;gap:8px;z-index:300;animation:toastIn .3s ease;box-shadow:0 8px 24px rgba(0,0,0,0.4)}
-@keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-@media(max-width:560px){.nav-links{display:none}}
+footer {
+  border-top: 1px solid var(--border);
+  padding: 24px clamp(16px,5vw,60px);
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 12px;
+}
+.footer-logo { font-family: var(--font-head); font-size: 13px; font-weight: 900; color: var(--accent); }
+footer p { font-size: 12px; color: var(--muted); }
 </style>
 </head>
 <body>
 
 <nav>
-  <span class="nav-logo" onclick="showPage('home')">ГРА<span>.</span></span>
-  <div class="nav-links">
-    <a onclick="showPage('catalog')">Каталог</a>
-    <a onclick="scrollToSection('sec-rating')">Рейтинг</a>
-    <a onclick="scrollToSection('sec-news')">Новини</a>
-  </div>
-  <div class="nav-right" id="nav-auth">
-    <button class="btn-sm btn-outline" onclick="openModal('login')">Увійти</button>
-    <button class="btn-sm btn-accent" onclick="openModal('register')">Реєстрація</button>
-  </div>
-  <div class="nav-right" id="nav-user" style="display:none">
-    <div style="width:32px;height:32px;border-radius:50%;background:var(--surface2);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px" id="nav-emoji">👤</div>
-    <span id="nav-username" style="font-size:13px;font-weight:500"></span>
-    <span id="nav-admin-badge" class="badge-admin" style="display:none">АДМІН</span>
-    <button id="nav-admin-btn" class="btn-sm btn-outline" onclick="showPage('admin')" style="display:none">Панель</button>
-    <button class="btn-sm btn-outline" onclick="logout()">Вийти</button>
-  </div>
+  <a class="nav-logo" href="/">ІГРОВА<span>.</span></a>
+  <span class="nav-badge">ЗАФК · Онлайн ігри</span>
 </nav>
 
-<!-- HOME -->
-<div class="page active" id="page-home">
-  <div class="hero">
-    <div class="hero-tag">Клуб настільних ігор ЗАФК</div>
-    <h1>Грай. Думай.<br><em>Перемагай.</em></h1>
-    <p>Платформа настільних ігор для студентів та викладачів коледжу. Каталог ігор, рейтинги, відгуки.</p>
-    <div class="hero-actions">
-      <button class="btn-lg accent" onclick="showPage('catalog')">Дивитись каталог</button>
-      <button class="btn-lg ghost" onclick="openModal('register')">Приєднатись</button>
-    </div>
-    <div class="hero-stats">
-      <div class="stat"><div class="stat-num" id="stat-games">0</div><div class="stat-label">Ігри в каталозі</div></div>
-      <div class="stat"><div class="stat-num" id="stat-users">0</div><div class="stat-label">Учасники клубу</div></div>
-      <div class="stat"><div class="stat-num">6</div><div class="stat-label">Жанри</div></div>
-    </div>
-  </div>
-  <section>
-    <div class="section-header">
-      <span class="section-title">Популярні ігри</span>
-      <span class="section-link" onclick="showPage('catalog')">Всі ігри →</span>
-    </div>
-    <div class="genre-chips" id="home-chips">
-      <button class="chip active" onclick="homeFilter(this,'')">Усі</button>
-      <button class="chip" onclick="homeFilter(this,'strategy')">Стратегія</button>
-      <button class="chip" onclick="homeFilter(this,'party')">Вечірка</button>
-      <button class="chip" onclick="homeFilter(this,'logic')">Логіка</button>
-      <button class="chip" onclick="homeFilter(this,'coop')">Кооператив</button>
-      <button class="chip" onclick="homeFilter(this,'card')">Карткова</button>
-      <button class="chip" onclick="homeFilter(this,'deduction')">Дедукція</button>
-    </div>
-    <div class="games-grid" id="home-games"></div>
-  </section>
-  <section style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)" id="sec-rating">
-    <div class="section-header"><span class="section-title">Топ гравців</span></div>
-    <div class="players-list" id="players-list"></div>
-  </section>
-  <section id="sec-news">
-    <div class="section-header"><span class="section-title">Новини клубу</span></div>
-    <div class="news-grid" id="news-grid"></div>
-  </section>
-  <footer>
-    <div class="footer-logo">ГРА.</div>
-    <p>© 2025 ЗАФК ім. О. Г. Івченка — Клуб настільних ігор</p>
-  </footer>
+<div class="hero">
+  <div class="hero-eyebrow">Ігрова платформа</div>
+  <h1>Грай з друзями<br><em>онлайн.</em></h1>
+  <p>Настільні ігри прямо в браузері. Створи кімнату, поділись кодом — і грай зі студентами коледжу.</p>
 </div>
 
-<!-- CATALOG -->
-<div class="page" id="page-catalog">
-  <div class="catalog-header">
-    <h1>Каталог ігор</h1>
-    <p>Знайди гру до смаку — фільтруй за жанром, кількістю гравців або часом партії</p>
-  </div>
-  <div class="catalog-controls">
-    <input class="search-box" type="text" placeholder="Пошук гри..." oninput="renderCatalog()" id="cat-search">
-    <select class="filter-select" onchange="renderCatalog()" id="cat-genre">
-      <option value="">Усі жанри</option>
-      <option value="strategy">Стратегія</option>
-      <option value="party">Вечірка</option>
-      <option value="logic">Логіка</option>
-      <option value="coop">Кооператив</option>
-      <option value="card">Карткова</option>
-      <option value="deduction">Дедукція</option>
-    </select>
-    <select class="filter-select" onchange="renderCatalog()" id="cat-players">
-      <option value="">Будь-яка к-сть</option>
-      <option value="2">2 гравці</option>
-      <option value="3">3–4 гравці</option>
-      <option value="5">5+ гравців</option>
-    </select>
-    <select class="filter-select" onchange="renderCatalog()" id="cat-sort">
-      <option value="rating">За рейтингом</option>
-      <option value="name">За назвою (А–Я)</option>
-      <option value="new">Нові спочатку</option>
-    </select>
-  </div>
-  <div class="catalog-grid" id="catalog-grid"></div>
-</div>
+<div class="games-section">
+  <div class="section-label">Доступні ігри</div>
+  <div class="games-grid">
 
-<!-- GAME PAGE -->
-<div class="page" id="page-game">
-  <button class="back-btn" id="game-back-btn">← Назад</button>
-  <div id="game-detail-header"></div>
-  <div id="game-detail-body"></div>
-</div>
+    <!-- UNO -->
+    <a class="game-card uno" href="uno.html">
+      <div class="game-card-cover">
+        <div class="cover-glow"></div>
+        <span class="cover-emoji">🃏</span>
+      </div>
+      <div class="game-card-body">
+        <div class="game-card-header">
+          <div class="game-card-name">UNO</div>
+          <span class="game-status live">● Доступна</span>
+        </div>
+        <div class="game-card-desc">Класична карткова гра. Позбудься карт першим, кричи «УНО!» і перемагай суперників.</div>
+        <div class="game-card-meta">
+          <span class="meta-item"><span class="meta-icon">👥</span> 2–6 гравців</span>
+          <span class="meta-item"><span class="meta-icon">⏱</span> 15–30 хв</span>
+          <span class="meta-item"><span class="meta-icon">🔥</span> Реалтайм</span>
+        </div>
+        <div class="game-card-cta">Грати зараз →</div>
+      </div>
+    </a>
 
-<!-- ADMIN -->
-<div class="page" id="page-admin">
-  <div class="admin-layout">
-    <div class="admin-sidebar">
-      <div class="admin-sidebar-title">Адміністрування</div>
-      <div class="admin-nav-item active" onclick="adminTab(this,'dashboard')"><span class="admin-nav-icon">📊</span>Огляд</div>
-      <div class="admin-nav-item" onclick="adminTab(this,'games')"><span class="admin-nav-icon">🎲</span>Ігри</div>
-      <div class="admin-nav-item" onclick="adminTab(this,'add-game')"><span class="admin-nav-icon">➕</span>Додати гру</div>
-      <div class="admin-nav-item" onclick="adminTab(this,'news')"><span class="admin-nav-icon">📰</span>Новини</div>
-      <div class="admin-nav-item" onclick="adminTab(this,'add-news')"><span class="admin-nav-icon">✏️</span>Додати новину</div>
-      <div class="admin-nav-item" onclick="adminTab(this,'users')"><span class="admin-nav-icon">👥</span>Користувачі</div>
+    <!-- ALIAS -->
+    <div class="game-card alias coming-soon">
+      <div class="game-card-cover">
+        <div class="cover-glow"></div>
+        <span class="cover-emoji">💬</span>
+      </div>
+      <div class="game-card-body">
+        <div class="game-card-header">
+          <div class="game-card-name">Alias</div>
+          <span class="game-status soon">Незабаром</span>
+        </div>
+        <div class="game-card-desc">Пояснюй слова без однокореневих — команда відгадує. Таймер, очки, перемога.</div>
+        <div class="game-card-meta">
+          <span class="meta-item"><span class="meta-icon">👥</span> 4–12 гравців</span>
+          <span class="meta-item"><span class="meta-icon">⏱</span> 30–60 хв</span>
+          <span class="meta-item"><span class="meta-icon">🎤</span> Командна</span>
+        </div>
+        <div class="game-card-cta disabled">Скоро →</div>
+      </div>
+      <div class="soon-overlay"><div class="soon-badge">В розробці</div></div>
     </div>
-    <div class="admin-content">
 
-      <!-- DASHBOARD -->
-      <div class="admin-content-inner active" id="atab-dashboard">
-        <div class="admin-page-title">Огляд</div>
-        <div class="admin-page-sub">Стан платформи</div>
-        <div class="admin-stats">
-          <div class="admin-stat-card"><div class="admin-stat-num" id="adm-st-games">0</div><div class="admin-stat-label">Ігор у каталозі</div></div>
-          <div class="admin-stat-card"><div class="admin-stat-num" id="adm-st-users">0</div><div class="admin-stat-label">Зареєстрованих</div></div>
-          <div class="admin-stat-card"><div class="admin-stat-num" id="adm-st-news">0</div><div class="admin-stat-label">Новин</div></div>
-          <div class="admin-stat-card"><div class="admin-stat-num" id="adm-st-reviews">0</div><div class="admin-stat-label">Відгуків</div></div>
-        </div>
-        <div class="admin-table-wrap">
-          <div class="admin-table-header"><span class="admin-table-title">Останні реєстрації</span></div>
-          <table><thead><tr><th>Користувач</th><th>Пошта</th><th>Група</th><th>Роль</th></tr></thead>
-          <tbody id="adm-recent-users"></tbody></table>
-        </div>
+    <!-- CODENAMES -->
+    <div class="game-card codenames coming-soon">
+      <div class="game-card-cover">
+        <div class="cover-glow"></div>
+        <span class="cover-emoji">🕵️</span>
       </div>
-
-      <!-- GAMES LIST -->
-      <div class="admin-content-inner" id="atab-games">
-        <div class="admin-page-title">Ігри</div>
-        <div class="admin-page-sub">Управління каталогом</div>
-        <div class="admin-table-wrap">
-          <div class="admin-table-header">
-            <span class="admin-table-title" id="adm-games-count">—</span>
-            <button class="btn-primary" onclick="adminTab(document.querySelector('.admin-nav-item:nth-child(3)'),'add-game')" style="font-size:12px;padding:7px 16px">+ Додати</button>
-          </div>
-          <table><thead><tr><th></th><th>Назва</th><th>Жанр</th><th>Гравці</th><th>Час</th><th>Рейтинг</th><th>Дії</th></tr></thead>
-          <tbody id="adm-games-table"></tbody></table>
+      <div class="game-card-body">
+        <div class="game-card-header">
+          <div class="game-card-name">Codenames</div>
+          <span class="game-status soon">Незабаром</span>
         </div>
-      </div>
-
-      <!-- ADD GAME -->
-      <div class="admin-content-inner" id="atab-add-game">
-        <div class="admin-page-title" id="game-form-title">Додати гру</div>
-        <div class="admin-page-sub">Заповни інформацію про нову настільну гру</div>
-        <div class="admin-form">
-          <div class="form-grid">
-            <div class="form-group"><label>Назва гри *</label><input type="text" id="f-name" placeholder="Catan"></div>
-            <div class="form-group"><label>Емодзі</label><input type="text" id="f-emoji" placeholder="🎲" maxlength="4"></div>
-            <div class="form-group"><label>Жанр</label>
-              <select id="f-genre"><option value="strategy">Стратегія</option><option value="party">Вечірка</option><option value="logic">Логіка</option><option value="coop">Кооператив</option><option value="card">Карткова</option><option value="deduction">Дедукція</option></select>
-            </div>
-            <div class="form-group"><label>Гравці *</label><input type="text" id="f-players" placeholder="2–4"></div>
-            <div class="form-group"><label>Час партії *</label><input type="text" id="f-time" placeholder="45 хв"></div>
-            <div class="form-group"><label>Рейтинг (1–5)</label><input type="number" id="f-rating" placeholder="4.5" min="1" max="5" step="0.1"></div>
-            <div class="form-group full"><label>Короткий опис *</label><textarea id="f-desc" placeholder="2–3 речення про суть гри..."></textarea></div>
-            <div class="form-group full"><label>Правила (стислий виклад)</label><textarea id="f-rules" placeholder="Як відбувається гра, ціль, фінал..." style="min-height:100px"></textarea></div>
-            <div class="form-group"><label>Мітка</label><select id="f-isnew"><option value="false">Без мітки</option><option value="true">НОВА</option></select></div>
-          </div>
-          <input type="hidden" id="f-edit-id" value="">
-          <div class="form-actions">
-            <button class="btn-primary" onclick="saveGame()">Зберегти гру</button>
-            <button class="btn-secondary" onclick="resetGameForm()">Скинути</button>
-          </div>
+        <div class="game-card-desc">Капітан підказує одним словом — команда відгадує агентів. Не вибери чорну карту!</div>
+        <div class="game-card-meta">
+          <span class="meta-item"><span class="meta-icon">👥</span> 4–8 гравців</span>
+          <span class="meta-item"><span class="meta-icon">⏱</span> 20–30 хв</span>
+          <span class="meta-item"><span class="meta-icon">🧠</span> Асоціації</span>
         </div>
+        <div class="game-card-cta disabled">Скоро →</div>
       </div>
-
-      <!-- NEWS LIST -->
-      <div class="admin-content-inner" id="atab-news">
-        <div class="admin-page-title">Новини</div>
-        <div class="admin-page-sub">Оголошення та події клубу</div>
-        <div id="adm-news-list"></div>
-      </div>
-
-      <!-- ADD NEWS -->
-      <div class="admin-content-inner" id="atab-add-news">
-        <div class="admin-page-title" id="news-form-title">Додати новину</div>
-        <div class="admin-page-sub">Нове оголошення або подія для головної сторінки</div>
-        <div class="admin-form">
-          <div class="form-grid">
-            <div class="form-group"><label>Заголовок *</label><input type="text" id="fn-title" placeholder="Назва події"></div>
-            <div class="form-group"><label>Дата</label><input type="date" id="fn-date"></div>
-            <div class="form-group full"><label>Текст *</label><textarea id="fn-text" placeholder="Деталі новини..."></textarea></div>
-          </div>
-          <input type="hidden" id="fn-edit-id" value="">
-          <div class="form-actions">
-            <button class="btn-primary" onclick="saveNews()">Зберегти новину</button>
-            <button class="btn-secondary" onclick="resetNewsForm()">Скинути</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- USERS -->
-      <div class="admin-content-inner" id="atab-users">
-        <div class="admin-page-title">Користувачі</div>
-        <div class="admin-page-sub">Зареєстровані учасники клубу</div>
-        <div class="admin-table-wrap">
-          <div class="admin-table-header"><span class="admin-table-title" id="adm-users-count">—</span></div>
-          <table><thead><tr><th>Ім'я</th><th>Пошта</th><th>Група</th><th>Роль</th><th>Дії</th></tr></thead>
-          <tbody id="adm-users-table"></tbody></table>
-        </div>
-      </div>
-
+      <div class="soon-overlay"><div class="soon-badge">В розробці</div></div>
     </div>
+
+    <!-- DOBBLE -->
+    <div class="game-card dobble coming-soon">
+      <div class="game-card-cover">
+        <div class="cover-glow"></div>
+        <span class="cover-emoji">🔵</span>
+      </div>
+      <div class="game-card-body">
+        <div class="game-card-header">
+          <div class="game-card-name">Dobble</div>
+          <span class="game-status soon">Незабаром</span>
+        </div>
+        <div class="game-card-desc">На будь-яких двох картках є рівно один спільний символ — знайди його першим!</div>
+        <div class="game-card-meta">
+          <span class="meta-item"><span class="meta-icon">👥</span> 2–8 гравців</span>
+          <span class="meta-item"><span class="meta-icon">⏱</span> 10–15 хв</span>
+          <span class="meta-item"><span class="meta-icon">👁</span> Реакція</span>
+        </div>
+        <div class="game-card-cta disabled">Скоро →</div>
+      </div>
+      <div class="soon-overlay"><div class="soon-badge">В розробці</div></div>
+    </div>
+
   </div>
 </div>
 
-<!-- AUTH MODAL -->
-<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal()">✕</button>
-    <div id="modal-login">
-      <div class="modal-logo">ГРА.</div>
-      <div class="modal-sub">Увійди за поштою коледжу</div>
-      <div class="error-msg" id="login-err"></div>
-      <label>Пошта</label>
-      <input type="email" id="login-email" placeholder="mitin@zac.org.ua">
-      <div class="domain-hint">Тільки акаунти <b>@zac.org.ua</b></div>
-      <label>Пароль</label>
-      <input type="password" id="login-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
-      <button class="modal-btn" onclick="doLogin()">Увійти</button>
-      <div class="modal-switch">Немає акаунту? <a onclick="switchModal('register')">Зареєструватись</a></div>
-    </div>
-    <div id="modal-register" style="display:none">
-      <div class="modal-logo">ГРА.</div>
-      <div class="modal-sub">Реєстрація студента або викладача</div>
-      <div class="error-msg" id="reg-err"></div>
-      <label>Ім'я та прізвище</label>
-      <input type="text" id="reg-name" placeholder="Іван Петренко">
-      <label>Пошта коледжу</label>
-      <input type="email" id="reg-email" placeholder="ivan-kn22@zac.org.ua">
-      <div class="domain-hint">Тільки акаунти <b>@zac.org.ua</b></div>
-      <label>Група або кафедра</label>
-      <input type="text" id="reg-group" placeholder="КН-22 або Комп. дисципліни">
-      <label>Пароль</label>
-      <input type="password" id="reg-pass" placeholder="мінімум 8 символів" onkeydown="if(event.key==='Enter')doRegister()">
-      <button class="modal-btn" onclick="doRegister()">Зареєструватись</button>
-      <div class="modal-switch">Вже є акаунт? <a onclick="switchModal('login')">Увійти</a></div>
-    </div>
-  </div>
-</div>
+<footer>
+  <div class="footer-logo">ІГРОВА.</div>
+  <p>© 2025 ЗАФК ім. О. Г. Івченка</p>
+</footer>
 
-<!-- Firebase CDN -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
-  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, doc, getDocs, getDoc, setDoc, addDoc,
-  deleteDoc, updateDoc, onSnapshot, serverTimestamp, query, orderBy }
-  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBVT8diZtAjGe8f5_YStP7HiRO-B6uOOPU",
-  authDomain: "zafc-games.firebaseapp.com",
-  projectId: "zafc-games",
-  storageBucket: "zafc-games.firebasestorage.app",
-  messagingSenderId: "890011883944",
-  appId: "1:890011883944:web:1282da38b38e7e477d259d"
-};
-
-const fbApp  = initializeApp(firebaseConfig);
-const auth   = getAuth(fbApp);
-const db     = getFirestore(fbApp);
-const DOMAIN = 'zac.org.ua';
-
-// ── RUNTIME STATE ──
-let GAMES = [
-  {id:1,name:'Колонізатори (Catan)',emoji:'🏝️',genre:'strategy',players:'3–4',time:'90 хв',rating:4.8,reviews:24,isNew:false,
-   desc:'Класична стратегія на будівництво поселень. Збирай ресурси, будуй дороги й міста, торгуй із суперниками.',
-   rules:'Гравці по черзі кидають два кубики — власники поселень на суміжних гексах отримують ресурси. Потім будуй дороги (1 дерево + 1 цегла), поселення (+1 до кожного ресурсу) або міста (2 пшениці + 3 руди, подвоює ресурси). Перший до 10 очок перемагає.'},
-  {id:2,name:'Ticket to Ride: Європа',emoji:'🚂',genre:'strategy',players:'2–5',time:'75 хв',rating:4.6,reviews:18,isNew:false,
-   desc:'Прокладай залізничні маршрути по Європі, виконуй квитки-завдання та блокуй суперників.',
-   rules:'На кожному ходу або тягни до 2 карт вагонів, або будуй маршрут (скидаючи потрібні картки), або бери нові квитки. Виконані квитки приносять очки, невиконані — забирають. Найдовший маршрут дає 10 бонусних очок.'},
-  {id:3,name:'Codenames',emoji:'🕵️',genre:'party',players:'4–8',time:'30 хв',rating:4.9,reviews:31,isNew:false,
-   desc:'Командна гра на асоціації. Капітан підказує одним словом — команда відгадує потрібні картки.',
-   rules:'25 карт зі словами у сітці 5×5. Капітани знають, які слова "свої", "чужі" та одне чорне (миттєва поразка). Капітан каже підказку + число. Команда вказує на картки. Відкрийте всі свої карти першими — і перемога ваша.'},
-  {id:4,name:'Pandemic',emoji:'🦠',genre:'coop',players:'2–4',time:'60 хв',rating:4.6,reviews:15,isNew:false,
-   desc:'Кооперативна гра: команда лікарів рятує світ від чотирьох смертельних епідемій.',
-   rules:'4 дії на хід: рух, лікування, побудова лабораторії, обмін картками. Після ходу розкриваються картки заражень. Зберіть 5 карт одного кольору в місті з лабораторією — знайдено ліки. Вилікуйте всі 4 хвороби до вичерпання колоди або 8 спалахів.'},
-  {id:5,name:'7 Wonders',emoji:'🏛️',genre:'strategy',players:'2–7',time:'45 хв',rating:4.5,reviews:12,isNew:false,
-   desc:'Будуй одне з 7 чудес світу, розвивай цивілізацію через три епохи.',
-   rules:'Гравці отримують руку карт, обирають одну і передають решту сусіду. Три епохи, шість передач на кожну. Картки дають ресурси, науку, армію, торгівлю або очки. Після трьох епох підраховуються всі категорії.'},
-  {id:6,name:'Exploding Kittens',emoji:'💣',genre:'card',players:'2–5',time:'15 хв',rating:4.2,reviews:27,isNew:false,
-   desc:'Блискавична гра на виживання. Тягни карту — якщо це вибухова киця, ти вибухаєш.',
-   rules:'Тягни одну карту наприкінці ходу. Вибуховий кошеня = ти вибуваєш (якщо немає карти Знешкодження). Інші дії: Пропуск, Атака, Підглянути, Перемішати, Вкрасти. Останній, хто не вибухнув — переможець.'},
-  {id:7,name:'Dixit',emoji:'🎨',genre:'party',players:'3–6',time:'30 хв',rating:4.7,reviews:20,isNew:false,
-   desc:'Гра уяви та асоціацій з дивовижними ілюстраціями. Ідеальна для будь-якої компанії.',
-   rules:'Оповідач описує карту словом або фразою. Інші кладуть схожу карту зі своїх рук. Всі картки перемішуються й відкриваються — гравці голосують за оригінал. Якщо вгадали всі або ніхто — оповідач не отримує очок. Перший до 30 очок виграє.'},
-  {id:8,name:'Splendor',emoji:'💎',genre:'logic',players:'2–4',time:'30 хв',rating:4.5,reviews:9,isNew:false,
-   desc:'Стань ювелірним купцем: збирай коштовні камені та купуй картки розвитку.',
-   rules:'Щоходу: бери 3 різні жетони, або 2 однакових, або резервуй карту (золото), або купуй карту. Картки дають постійні знижки та очки. Перший до 15 очок — переможець.'},
-  {id:9,name:'Carcassonne',emoji:'🏰',genre:'strategy',players:'2–5',time:'45 хв',rating:4.6,reviews:22,isNew:false,
-   desc:'Будуй середньовічний пейзаж: замки, дороги, монастирі та поля. Розміщуй своїх людей стратегічно.',
-   rules:'По черзі тягни тайл і прикладай до вже розкладених. Після кожного ходу можна поставити «мipпла» на тайл. За завершені замки і дороги очки нараховуються одразу; поля та монастирі рахуються наприкінці.'},
-  {id:10,name:'Love Letter',emoji:'💌',genre:'card',players:'2–4',time:'20 хв',rating:4.3,reviews:14,isNew:false,
-   desc:'Мікрогра з 16 карт. Доставте листа принцесі, вибуваючи суперників за допомогою придворних.',
-   rules:'Кожен гравець тримає 1 карту. На ходу тягнеш одну нову й граєш одну з двох. Якщо суперник виведений або наприкінці у тебе карта з вищим значенням — ти отримуєш жетон прихильності. Перший з 4 жетонами виграє.'},
-  {id:11,name:'Uno',emoji:'🃏',genre:'card',players:'2–10',time:'20 хв',rating:4.0,reviews:35,isNew:false,
-   desc:'Культова карткова гра для будь-якої компанії. Позбудься карт першим!',
-   rules:'Скидай карту, що збігається кольором або цифрою з верхівкою колоди. Спецкартки: +2, Пропуск, Розворот, Дикі (+4 та зміна кольору). Якщо залишилась одна карта — кричи "Уно!" або отримай штраф.'},
-  {id:12,name:'Coup',emoji:'👑',genre:'deduction',players:'2–6',time:'15 хв',rating:4.4,reviews:16,isNew:true,
-   desc:'Гра на блеф і дедукцію. Можна брехати про здібності своїх карт — якщо не спіймають.',
-   rules:'Оголошуй дію будь-якого персонажа (навіть якщо не маєш цієї карти). Суперники можуть оскаржити або заблокувати. Успішне оскарження — суперник втрачає карту. Помилкове — ти втрачаєш карту. Хто втратив обидві — вибуває.'},
-  {id:13,name:'Resistance: Avalon',emoji:'⚔️',genre:'deduction',players:'5–10',time:'30 хв',rating:4.7,reviews:11,isNew:true,
-   desc:'Соціальна дедукція: лицарі Артура проти зрадників Мордреда. Хто бреше — визнач сам.',
-   rules:'Половина гравців — таємні зрадники. Команди формуються голосуванням. Обрана команда голосує таємно: лицарі — завжди "Успіх", зрадники можуть давати "Провал". 3 провалені місії з 5 — зрадники виграли, 3 успішні — лицарі.'},
-  {id:14,name:'Dobble (Spot It!)',emoji:'🔵',genre:'party',players:'2–8',time:'15 хв',rating:4.5,reviews:29,isNew:false,
-   desc:'Блискавична гра на уважність. На будь-яких двох картках є рівно один спільний символ — знайди першим!',
-   rules:'55 карт, 8 символів на кожній. На будь-яких двох картках рівно 1 спільний символ. Ігри: «Вежа», «Колодязь», «Гаряча картопля». Хто набрав найбільше карт — перемагає.'},
-  {id:15,name:'Alias (Скажи інакше)',emoji:'💬',genre:'party',players:'4–12',time:'40 хв',rating:4.3,reviews:23,isNew:false,
-   desc:'Пояснюй слова синонімами та прикладами — але не вимовляй саме слово!',
-   rules:'Команди по черзі пояснюють слова за хвилину: кожне відгадане — 1 крок на полі. Не можна вживати однокореневі слова або перекладати. Перша команда, що дійшла до фінішу — перемагає.'},
-  {id:16,name:'Jenga',emoji:'🧱',genre:'logic',players:'1–8',time:'20 хв',rating:4.1,reviews:18,isNew:false,
-   desc:'Витягуй блоки з вежі й клади нагору, не звалюючи конструкцію. Простіше сказати, ніж зробити.',
-   rules:'54 блоки у вежі по 3 в ряд. По черзі однією рукою витягуй будь-який блок (крім верхнього ряду) і клади на верхівку. Той, після чиєї спроби вежа впала — програв.'},
-  {id:17,name:'Mysterium',emoji:'🔮',genre:'coop',players:'2–7',time:'75 хв',rating:4.6,reviews:8,isNew:true,
-   desc:'Кооперативна детективна гра. Привид спілкується з медіумами лише картинами-видіннями.',
-   rules:'Один гравець — Привид, решта — Медіуми. Привид мовчки роздає картки-видіння з абстрактними ілюстраціями. Медіуми обговорюють і вгадують підозрюваного, місце та знаряддя. 7 ночей — потім фінальне голосування.'},
-  {id:18,name:'Шакал',emoji:'⚓',genre:'strategy',players:'2–4',time:'60 хв',rating:4.4,reviews:7,isNew:false,
-   desc:'Піратська стратегія на острові. Відправляй піратів за скарбами, захоплюй кораблі суперників.',
-   rules:'Гравці відкривають тайли острова, знаходять скарби, пастки і особливі локації. Скарби треба перенести на корабель. Можна нападати на ворожих піратів. Хто доставить більше золота — перемагає.'},
-  {id:19,name:'Bang!',emoji:'🤠',genre:'deduction',players:'4–7',time:'30 хв',rating:4.2,reviews:19,isNew:false,
-   desc:'Вестерн з прихованими ролями. Шериф, Бандити, Відступники та Рятівник — хто перехитрить?',
-   rules:'Ролі таємні, лише Шериф відкривається. Картки: Bang! (атака), Missed! (ухил), Beer (зцілення), спецзброя. Шериф знищив усіх бандитів — перемогли правоохоронці; шериф вбитий — перемогли бандити або відступник.'},
-  {id:20,name:'Dobble Harry Potter',emoji:'⚡',genre:'party',players:'2–6',time:'15 хв',rating:4.4,reviews:11,isNew:true,
-   desc:'Версія Dobble у всесвіті Гаррі Поттера. Знаходь спільний символ швидше за всіх.',
-   rules:'Ті ж правила, що й у класичному Dobble, але символи — магічні предмети, чарівники та істоти зі світу Гоґвортсу. Ідеально для фанатів серії.'},
-  {id:21,name:'Хто Я?',emoji:'🪧',genre:'party',players:'3–10',time:'20 хв',rating:3.9,reviews:21,isNew:false,
-   desc:'Відома вечіркова гра. Вгадай персонажа на своєму лобі, ставлячи питання "Так/Ні".',
-   rules:'Кожному клеять стікер з іменем відомої особи. Ставиш питання, відповідь — лише "Так" або "Ні". Вгадав — переміг. Можна грати на час або на кількість запитань.'},
-  {id:22,name:'Pandemic: Legacy',emoji:'🧬',genre:'coop',players:'2–4',time:'90 хв',rating:4.9,reviews:5,isNew:true,
-   desc:'Кампанія на 12–24 партії зі змінами, що зберігаються. Найвищий рейтинг серед настільних ігор світу.',
-   rules:'Як базова Пандемія, але з кампанійними елементами: персонажі розвиваються та отримують навички. Завдання змінюються щомісяця кампанії. Прийняті рішення незворотні. Кожна партія — частина великої таємничої історії.'},
-];
-
-let NEWS = [
-  {id:1,date:'2025-05-10',title:'Турнір з Catan — реєстрація відкрита',text:'Запрошуємо всіх охочих взяти участь у весняному турнірі. Призи від студради! Реєстрація до 20 травня.'},
-  {id:2,date:'2025-05-03',title:'Нові ігри в каталозі',text:'Додали Mysterium, Coup, Resistance: Avalon та Pandemic: Legacy. Беріть у клубі щочетверга!'},
-  {id:3,date:'2025-04-25',title:'Підсумки квітневого марафону',text:'Переможець — Олександр Мороз з 5 перемогами поспіль у Codenames. Вітаємо!'},
-];
-
-let USERS = [
-  {id:1,name:'Митін В.П.',email:'mitin@zac.org.ua',group:'Комп. дисципліни',role:'admin',emoji:'👨‍🏫'},
-  {id:2,name:'Олександр Мороз',email:'moroz-o-kn22@zac.org.ua',group:'КН-22',role:'user',emoji:'😎'},
-  {id:3,name:'Вікторія Лисенко',email:'lysenko-v-kn21@zac.org.ua',group:'КН-21',role:'user',emoji:'🦊'},
-  {id:4,name:'Дмитро Шевченко',email:'shevchenko-d-kn23@zac.org.ua',group:'КН-23',role:'user',emoji:'🐺'},
-  {id:5,name:'Аліна Бондар',email:'bondar-a-kn22@zac.org.ua',group:'КН-22',role:'user',emoji:'🦁'},
-];
-
-const PLAYERS = [
-  {name:'Олександр Мороз',group:'КН-22',score:1240,games:34,emoji:'😎'},
-  {name:'Вікторія Лисенко',group:'КН-21',score:1105,games:28,emoji:'🦊'},
-  {name:'Дмитро Шевченко',group:'КН-23',score:980,games:22,emoji:'🐺'},
-  {name:'Аліна Бондар',group:'КН-22',score:870,games:19,emoji:'🦁'},
-  {name:'Максим Ковальчук',group:'КН-21',score:760,games:15,emoji:'🐯'},
-];
-
-const GENRE_LABELS = {strategy:'Стратегія',party:'Вечірка',logic:'Логіка',coop:'Кооператив',card:'Карткова',deduction:'Дедукція'};
-let currentUser = null;
-
-// ── HELPERS ──
-const gl = g => GENRE_LABELS[g]||g;
-const stars = r => '★'.repeat(Math.floor(r))+'☆'.repeat(5-Math.floor(r));
-const fmtDate = iso => new Date(iso).toLocaleDateString('uk-UA',{day:'numeric',month:'long',year:'numeric'});
-function showToast(msg){ const t=document.createElement('div'); t.className='success-toast'; t.innerHTML='✓ '+msg; document.body.appendChild(t); setTimeout(()=>t.remove(),3000); }
-function showErr(id,m){ const e=document.getElementById(id); e.textContent=m; e.style.display='block'; }
-function hideErr(id){ document.getElementById(id).style.display='none'; }
-function gameCard(g,back){
-  return `<a class="game-card" href="#" onclick="showGame('${g.id}','${back}');return false">
-    <div class="game-cover"><span>${g.emoji}</span>${g.isNew?'<span class="game-badge">НОВА</span>':''}</div>
-    <div class="game-info">
-      <div class="game-name">${g.name}</div>
-      <div class="game-meta"><span>👥 ${g.players}</span><span>⏱ ${g.time}</span></div>
-      <div class="game-rating"><span class="stars">${stars(g.rating)}</span><span class="rating-num">${g.rating} (${g.reviews||0})</span></div>
-    </div></a>`;
-}
-
-// ── NAVIGATION ──
-function showPage(name){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page-'+name).classList.add('active');
-  if(name==='catalog')renderCatalog();
-  if(name==='admin'){ if(!currentUser||currentUser.role!=='admin'){alert('Доступно лише адміністраторам');return;} renderAdmin(); }
-  window.scrollTo(0,0);
-}
-function scrollToSection(id){ showPage('home'); setTimeout(()=>document.getElementById(id)?.scrollIntoView({behavior:'smooth'}),50); }
-
-// ── HOME ──
-let homeGenre='';
-function renderHome(){
-  document.getElementById('stat-games').textContent=GAMES.length;
-  document.getElementById('stat-users').textContent='∞';
-  const games=homeGenre?GAMES.filter(g=>g.genre===homeGenre):GAMES;
-  document.getElementById('home-games').innerHTML=games.slice(0,8).map(g=>gameCard(g,'home')).join('');
-  document.getElementById('players-list').innerHTML=PLAYERS.map((p,i)=>`
-    <div class="player-row">
-      <div class="player-rank ${i<3?'top':''}">${i+1}</div>
-      <div class="player-avatar">${p.emoji}</div>
-      <div style="flex:1"><div style="font-weight:500;font-size:14px">${p.name}</div><div style="font-size:11px;color:var(--muted)">${p.group}</div></div>
-      <div style="text-align:right"><div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent)">${p.score} очок</div><div style="font-size:11px;color:var(--muted)">${p.games} ігор</div></div>
-    </div>`).join('');
-  document.getElementById('news-grid').innerHTML=NEWS.slice(0,3).map(n=>`
-    <div class="news-card"><div class="news-date">${fmtDate(n.date)}</div><div class="news-title">${n.title}</div><div class="news-text">${n.text}</div></div>`).join('');
-}
-function homeFilter(el,genre){
-  homeGenre=genre;
-  document.querySelectorAll('#home-chips .chip').forEach(c=>c.classList.remove('active')); el.classList.add('active');
-  const games=genre?GAMES.filter(g=>g.genre===genre):GAMES;
-  document.getElementById('home-games').innerHTML=games.slice(0,8).map(g=>gameCard(g,'home')).join('');
-}
-
-// ── CATALOG ──
-function renderCatalog(){
-  const q=(document.getElementById('cat-search')?.value||'').toLowerCase();
-  const genre=document.getElementById('cat-genre')?.value||'';
-  const players=document.getElementById('cat-players')?.value||'';
-  const sort=document.getElementById('cat-sort')?.value||'rating';
-  let games=GAMES.filter(g=>{
-    if(q&&!g.name.toLowerCase().includes(q))return false;
-    if(genre&&g.genre!==genre)return false;
-    if(players==='2'&&!g.players.includes('2'))return false;
-    if(players==='3'&&!/[34]/.test(g.players))return false;
-    if(players==='5'&&!/[56789]/.test(g.players))return false;
-    return true;
-  });
-  if(sort==='rating')games.sort((a,b)=>b.rating-a.rating);
-  else if(sort==='name')games.sort((a,b)=>a.name.localeCompare(b.name,'uk'));
-  else games.sort((a,b)=>b.isNew-a.isNew);
-  document.getElementById('catalog-grid').innerHTML=games.map(g=>gameCard(g,'catalog')).join('')||
-    '<div style="color:var(--muted);padding:40px;text-align:center;grid-column:1/-1">Нічого не знайдено</div>';
-}
-
-// ── GAME PAGE ──
-function showGame(id,back='catalog'){
-  const g=GAMES.find(x=>x.id===id); if(!g)return;
-  document.getElementById('game-back-btn').onclick=()=>showPage(back);
-  document.getElementById('game-detail-header').innerHTML=`
-    <div class="game-page-header">
-      <div class="game-page-cover">${g.emoji}</div>
-      <div class="game-page-info">
-        <h1>${g.name}</h1>
-        <div class="game-tags"><span class="tag">${gl(g.genre)}</span><span class="tag">👥 ${g.players}</span><span class="tag">⏱ ${g.time}</span>${g.isNew?'<span class="tag" style="border-color:var(--accent);color:var(--accent)">Нова</span>':''}</div>
-        <div class="game-page-desc">${g.desc}</div>
-        <div class="game-page-props">
-          <div><div class="prop-label">Рейтинг</div><div class="prop-val">${g.rating} ${stars(g.rating)}</div></div>
-          <div><div class="prop-label">Відгуків</div><div class="prop-val">${g.reviews||0}</div></div>
-        </div>
-      </div>
-    </div>`;
-  // load reviews from Firestore
-  const reviewsRef = collection(db,'games',id,'reviews');
-  getDocs(query(reviewsRef,orderBy('createdAt','desc'))).then(snap=>{
-    const items = snap.docs.map(d=>d.data());
-    const reviewsHtml = items.length
-      ? items.map(r=>`<div class="review-item"><div class="review-top"><div class="review-avatar">👤</div><div><div class="review-name">${r.author}</div></div><div class="review-date">${fmtDate(r.date)}</div></div><div class="review-text">${r.text}</div></div>`).join('')
-      : '<div style="font-size:13px;color:var(--muted);padding:8px 0">Відгуків ще немає. Будь першим!</div>';
-    const formHtml = currentUser
-      ? `<div class="review-form" style="margin-top:16px"><textarea id="review-ta" placeholder="Твій відгук..."></textarea><button onclick="submitReview('${id}')" style="width:100%;padding:9px;background:var(--accent);color:#0e0e12;border:none;border-radius:8px;font-family:var(--font-head);font-size:12px;font-weight:700;cursor:pointer">Надіслати відгук</button></div>`
-      : `<div style="text-align:center;padding:16px;font-size:13px;color:var(--muted)"><a href="#" onclick="openModal('login')" style="color:var(--accent)">Увійди</a>, щоб залишити відгук</div>`;
-    document.getElementById('game-detail-body').innerHTML=`
-      <div class="game-page-body">
-        <div class="rules-block"><h2>Правила гри</h2><div class="rules-text"><p>${g.rules||'Правила в процесі заповнення.'}</p></div></div>
-        <div class="reviews-sidebar"><h2>Відгуки</h2>${reviewsHtml}${formHtml}</div>
-      </div>`;
-  });
-  document.getElementById('game-detail-body').innerHTML='<div style="padding:40px;text-align:center;color:var(--muted)">Завантаження...</div>';
-  showPage('game');
-}
-
-async function submitReview(gameId){
-  const ta=document.getElementById('review-ta');
-  const text=ta?.value.trim(); if(!text)return;
-  await addDoc(collection(db,'games',gameId,'reviews'),{
-    text, author:currentUser.displayName||currentUser.email.split('@')[0],
-    date:new Date().toISOString().slice(0,10), createdAt:serverTimestamp()
-  });
-  showToast('Відгук додано!');
-  showGame(gameId,'catalog');
-}
-
-// ── AUTH (Google OAuth) ──
-function openModal(type){ document.getElementById('modal-overlay').classList.add('open'); switchModal(type); }
-function closeModal(){ document.getElementById('modal-overlay').classList.remove('open'); }
-function closeModalOutside(e){ if(e.target.id==='modal-overlay')closeModal(); }
-function switchModal(type){ document.getElementById('modal-login').style.display=type==='login'?'block':'none'; document.getElementById('modal-register').style.display=type==='register'?'block':'none'; }
-
-async function doGoogleSignIn(){
-  hideErr('login-err');
-  const provider = new GoogleAuthProvider();
-  provider.setCustomParameters({hd: DOMAIN}); // підказує Google вибрати акаунт домену
-  try {
-    const result = await signInWithPopup(auth, provider);
-    const fbUser = result.user;
-    if(!fbUser.email.endsWith('@'+DOMAIN)){
-      await signOut(auth);
-      showErr('login-err','Лише акаунти @'+DOMAIN+' мають доступ.');
-      return;
-    }
-    await handleFirebaseUser(fbUser);
-    closeModal();
-  } catch(e){
-    if(e.code!=='auth/popup-closed-by-user') showErr('login-err','Помилка входу: '+e.message);
-  }
-}
-
-// legacy email/pass mock (поки немає Firebase Auth Email — для тестування)
-function doLogin(){
-  hideErr('login-err');
-  const email=document.getElementById('login-email').value.trim();
-  const pass=document.getElementById('login-pass').value;
-  if(!email.endsWith('@'+DOMAIN)){showErr('login-err','Лише @'+DOMAIN);return;}
-  if(pass.length<8){showErr('login-err','Пароль мінімум 8 символів');return;}
-  // create mock user locally (в реальній версії — Firebase Email/Password Auth)
-  const mockUser={uid:'local-'+Date.now(),email,displayName:email.split('@')[0],photoURL:null};
-  handleFirebaseUser(mockUser).then(()=>closeModal());
-}
-function doRegister(){
-  hideErr('reg-err');
-  const name=document.getElementById('reg-name').value.trim();
-  const email=document.getElementById('reg-email').value.trim();
-  const group=document.getElementById('reg-group').value.trim();
-  const pass=document.getElementById('reg-pass').value;
-  if(!name){showErr('reg-err',"Введи ім'я");return;}
-  if(!email.endsWith('@'+DOMAIN)){showErr('reg-err','Лише @'+DOMAIN);return;}
-  if(!group){showErr('reg-err','Введи групу або кафедру');return;}
-  if(pass.length<8){showErr('reg-err','Пароль мінімум 8 символів');return;}
-  const mockUser={uid:'local-'+Date.now(),email,displayName:name,photoURL:null,group};
-  handleFirebaseUser(mockUser,{name,group}).then(()=>{ showToast('Реєстрацію виконано!'); closeModal(); });
-}
-
-async function handleFirebaseUser(fbUser, extra={}){
-  const uid = fbUser.uid;
-  const userRef = doc(db,'users',uid);
-  const snap = await getDoc(userRef);
-  let userData;
-  if(snap.exists()){
-    userData = snap.data();
-    // оновлюємо ім'я якщо змінилось
-    if(fbUser.displayName && userData.name!==fbUser.displayName){
-      await updateDoc(userRef,{name:fbUser.displayName});
-      userData.name=fbUser.displayName;
-    }
-  } else {
-    // перший вхід — створюємо профіль
-    userData = {
-      uid, email:fbUser.email,
-      name: extra.name||fbUser.displayName||fbUser.email.split('@')[0],
-      group: extra.group||'',
-      role: fbUser.email==='mitin@zac.org.ua' ? 'admin' : 'user',
-      createdAt: serverTimestamp()
-    };
-    await setDoc(userRef, userData);
-  }
-  currentUser = {...userData, uid};
-  applyUserToUI();
-}
-
-function applyUserToUI(){
-  const u=currentUser; if(!u)return;
-  document.getElementById('nav-auth').style.display='none';
-  document.getElementById('nav-user').style.display='flex';
-  document.getElementById('nav-username').textContent=u.name||u.email.split('@')[0];
-  document.getElementById('nav-emoji').textContent='👤';
-  const isAdmin=u.role==='admin';
-  document.getElementById('nav-admin-badge').style.display=isAdmin?'':'none';
-  document.getElementById('nav-admin-btn').style.display=isAdmin?'':'none';
-  renderHome();
-}
-
-async function logout(){
-  try{ await signOut(auth); }catch(e){}
-  currentUser=null;
-  document.getElementById('nav-auth').style.display='';
-  document.getElementById('nav-user').style.display='none';
-  document.getElementById('nav-admin-badge').style.display='none';
-  document.getElementById('nav-admin-btn').style.display='none';
-  if(document.querySelector('#page-admin.active'))showPage('home');
-  renderHome();
-}
-
-// відновлення сесії при перезавантаженні
-onAuthStateChanged(auth, async fbUser=>{
-  if(fbUser && fbUser.email.endsWith('@'+DOMAIN)){
-    await handleFirebaseUser(fbUser);
-  }
-});
-
-// ── ADMIN ──
-function adminTab(el,name){
-  document.querySelectorAll('.admin-nav-item').forEach(i=>i.classList.remove('active')); el.classList.add('active');
-  document.querySelectorAll('.admin-content-inner').forEach(c=>c.classList.remove('active'));
-  document.getElementById('atab-'+name).classList.add('active');
-  if(name==='dashboard')renderAdmDash();
-  if(name==='games')renderAdmGames();
-  if(name==='news')renderAdmNews();
-  if(name==='users')renderAdmUsers();
-}
-function renderAdmin(){ renderAdmDash(); }
-function renderAdmDash(){
-  document.getElementById('adm-st-games').textContent=GAMES.length;
-  document.getElementById('adm-st-news').textContent=NEWS.length;
-  document.getElementById('adm-st-reviews').textContent=GAMES.reduce((s,g)=>s+(g.reviews||0),0);
-  // users count from Firestore
-  getDocs(collection(db,'users')).then(snap=>{
-    document.getElementById('adm-st-users').textContent=snap.size;
-    document.getElementById('adm-recent-users').innerHTML=snap.docs.slice(-5).reverse().map(d=>{const u=d.data();return`
-      <tr><td>${u.name||'—'}</td><td style="color:var(--muted);font-size:12px">${u.email}</td><td style="color:var(--muted)">${u.group||'—'}</td>
-      <td><span class="user-tag ${u.role||'user'}">${u.role==='admin'?'Адмін':'Студент'}</span></td></tr>`;}).join('');
-  });
-}
-function renderAdmGames(){
-  document.getElementById('adm-games-count').textContent=`Всього ігор: ${GAMES.length}`;
-  document.getElementById('adm-games-table').innerHTML=GAMES.map(g=>`
-    <tr><td style="font-size:22px;width:40px">${g.emoji}</td><td style="font-weight:500">${g.name}</td>
-    <td><span class="td-genre">${gl(g.genre)}</span></td>
-    <td style="color:var(--muted)">${g.players}</td><td style="color:var(--muted)">${g.time}</td>
-    <td style="color:var(--accent);font-family:var(--font-head);font-size:13px">${g.rating}</td>
-    <td><div class="td-actions"><button class="btn-edit" onclick="editGame('${g.id}')">✏️ Ред.</button><button class="btn-del" onclick="deleteGame('${g.id}')">🗑</button></div></td></tr>`).join('');
-}
-function renderAdmNews(){
-  document.getElementById('adm-news-list').innerHTML=NEWS.map(n=>`
-    <div class="news-admin-item">
-      <div class="news-admin-body"><div class="news-admin-title">${n.title}</div><div class="news-admin-text">${n.text}</div><div class="news-admin-date">${fmtDate(n.date)}</div></div>
-      <div style="display:flex;flex-direction:column;gap:8px;flex-shrink:0"><button class="btn-edit" onclick="editNewsItem('${n.id}')">✏️ Ред.</button><button class="btn-del" onclick="deleteNewsItem('${n.id}')">🗑</button></div>
-    </div>`).join('');
-}
-function renderAdmUsers(){
-  getDocs(collection(db,'users')).then(snap=>{
-    document.getElementById('adm-users-count').textContent=`Користувачів: ${snap.size}`;
-    document.getElementById('adm-users-table').innerHTML=snap.docs.map(d=>{const u={...d.data(),uid:d.id};return`
-      <tr><td>${u.name||'—'}</td><td style="color:var(--muted);font-size:12px">${u.email}</td><td style="color:var(--muted)">${u.group||'—'}</td>
-      <td><span class="user-tag ${u.role||'user'}">${u.role==='admin'?'Адмін':'Студент'}</span></td>
-      <td><div class="td-actions">
-        ${u.role!=='admin'?`<button class="btn-edit" onclick="promoteUser('${u.uid}','${u.name||u.email}')">↑ Адмін</button>`:''}
-        ${u.email!=='mitin@zac.org.ua'?`<button class="btn-del" onclick="deleteUserFb('${u.uid}')">🗑</button>`:''}
-      </div></td></tr>`;}).join('');
-  });
-}
-
-// ── GAME CRUD (Firestore) ──
-async function saveGame(){
-  const name=document.getElementById('f-name').value.trim();
-  const emoji=document.getElementById('f-emoji').value.trim()||'🎲';
-  const genre=document.getElementById('f-genre').value;
-  const players=document.getElementById('f-players').value.trim();
-  const time=document.getElementById('f-time').value.trim();
-  const rating=parseFloat(document.getElementById('f-rating').value)||4.0;
-  const desc=document.getElementById('f-desc').value.trim();
-  const rules=document.getElementById('f-rules').value.trim();
-  const isNew=document.getElementById('f-isnew').value==='true';
-  const editId=document.getElementById('f-edit-id').value;
-  if(!name||!players||!time||!desc){alert('Заповни: назва, гравці, час, опис');return;}
-  const data={name,emoji,genre,players,time,rating,desc,rules,isNew,reviews:0};
-  if(editId){
-    await updateDoc(doc(db,'games',editId),{name,emoji,genre,players,time,rating,desc,rules,isNew});
-    const i=GAMES.findIndex(g=>g.id===editId);
-    if(i!==-1)GAMES[i]={...GAMES[i],...data,id:editId};
-    showToast('Гру оновлено!');
-  } else {
-    const ref=await addDoc(collection(db,'games'),{...data,createdAt:serverTimestamp()});
-    GAMES.push({...data,id:ref.id});
-    showToast('Гру додано!');
-  }
-  resetGameForm(); renderHome(); renderAdmGames();
-}
-function editGame(id){
-  const g=GAMES.find(x=>x.id===id); if(!g)return;
-  document.getElementById('f-name').value=g.name||'';
-  document.getElementById('f-emoji').value=g.emoji||'';
-  document.getElementById('f-players').value=g.players||'';
-  document.getElementById('f-time').value=g.time||'';
-  document.getElementById('f-rating').value=g.rating||'';
-  document.getElementById('f-desc').value=g.desc||'';
-  document.getElementById('f-rules').value=g.rules||'';
-  document.getElementById('f-genre').value=g.genre||'strategy';
-  document.getElementById('f-isnew').value=g.isNew?'true':'false';
-  document.getElementById('f-edit-id').value=g.id;
-  document.getElementById('game-form-title').textContent='Редагувати гру';
-  adminTab(document.querySelector('.admin-nav-item:nth-child(3)'),'add-game');
-}
-async function deleteGame(id){
-  if(!confirm('Видалити гру?'))return;
-  await deleteDoc(doc(db,'games',id));
-  GAMES=GAMES.filter(g=>g.id!==id); renderAdmGames(); renderHome(); showToast('Видалено');
-}
-function resetGameForm(){
-  ['f-name','f-emoji','f-players','f-time','f-rating','f-desc','f-rules'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('f-genre').value='strategy';
-  document.getElementById('f-isnew').value='false';
-  document.getElementById('f-edit-id').value='';
-  document.getElementById('game-form-title').textContent='Додати гру';
-}
-
-// ── NEWS CRUD (Firestore) ──
-async function saveNews(){
-  const title=document.getElementById('fn-title').value.trim();
-  const date=document.getElementById('fn-date').value||new Date().toISOString().slice(0,10);
-  const text=document.getElementById('fn-text').value.trim();
-  const editId=document.getElementById('fn-edit-id').value;
-  if(!title||!text){alert('Заповни заголовок і текст');return;}
-  if(editId){
-    await updateDoc(doc(db,'news',editId),{title,date,text});
-    const i=NEWS.findIndex(n=>n.id===editId);
-    if(i!==-1)NEWS[i]={...NEWS[i],title,date,text};
-    showToast('Новину оновлено!');
-  } else {
-    const ref=await addDoc(collection(db,'news'),{title,date,text,createdAt:serverTimestamp()});
-    NEWS.unshift({id:ref.id,title,date,text});
-    showToast('Новину опубліковано!');
-  }
-  resetNewsForm(); renderHome(); renderAdmNews();
-}
-function editNewsItem(id){
-  const n=NEWS.find(x=>x.id===id); if(!n)return;
-  document.getElementById('fn-title').value=n.title;
-  document.getElementById('fn-date').value=n.date;
-  document.getElementById('fn-text').value=n.text;
-  document.getElementById('fn-edit-id').value=n.id;
-  document.getElementById('news-form-title').textContent='Редагувати новину';
-  adminTab(document.querySelector('.admin-nav-item:nth-child(5)'),'add-news');
-}
-async function deleteNewsItem(id){
-  if(!confirm('Видалити новину?'))return;
-  await deleteDoc(doc(db,'news',id));
-  NEWS=NEWS.filter(n=>n.id!==id); renderAdmNews(); renderHome(); showToast('Видалено');
-}
-function resetNewsForm(){
-  document.getElementById('fn-title').value='';
-  document.getElementById('fn-date').value=new Date().toISOString().slice(0,10);
-  document.getElementById('fn-text').value='';
-  document.getElementById('fn-edit-id').value='';
-  document.getElementById('news-form-title').textContent='Додати новину';
-}
-
-// ── USERS (Firestore) ──
-async function promoteUser(uid,name){
-  await updateDoc(doc(db,'users',uid),{role:'admin'});
-  renderAdmUsers(); showToast(name+' тепер адміністратор');
-}
-async function deleteUserFb(uid){
-  if(!confirm('Видалити користувача?'))return;
-  await deleteDoc(doc(db,'users',uid));
-  renderAdmUsers(); renderAdmDash();
-}
-
-// ── SEED: записуємо дефолтні ігри у Firestore якщо колекція порожня ──
-async function seedIfEmpty(){
-  const snap=await getDocs(collection(db,'games'));
-  if(!snap.empty){
-    GAMES=snap.docs.map(d=>({...d.data(),id:d.id}));
-    renderHome();
-    return;
-  }
-  // перша ініціалізація — записуємо всі дефолтні ігри
-  for(const g of GAMES){
-    const {id,...data}=g;
-    const ref=await addDoc(collection(db,'games'),{...data,createdAt:serverTimestamp()});
-    g.id=ref.id; // оновлюємо id в пам'яті
-  }
-  // записуємо дефолтні новини
-  for(const n of NEWS){
-    const {id,...data}=n;
-    const ref=await addDoc(collection(db,'news'),{...data,createdAt:serverTimestamp()});
-    n.id=ref.id;
-  }
-  renderHome();
-}
-
-// realtime listener для новин
-onSnapshot(query(collection(db,'news'),orderBy('createdAt','desc')), snap=>{
-  NEWS=snap.docs.map(d=>({...d.data(),id:d.id}));
-  if(document.querySelector('#page-home.active'))renderHome();
-  if(document.querySelector('#atab-news.active'))renderAdmNews();
-});
-
-// ── INIT ──
-document.getElementById('fn-date').value=new Date().toISOString().slice(0,10);
-renderHome();
-seedIfEmpty();
-// ── EXPOSE TO GLOBAL SCOPE (потрібно для onclick у HTML) ──
-Object.assign(window,{
-  showPage, scrollToSection, homeFilter, renderCatalog, showGame, submitReview,
-  openModal, closeModal, closeModalOutside, switchModal,
-  doGoogleSignIn, doLogin, doRegister, logout,
-  adminTab, saveGame, editGame, deleteGame, resetGameForm,
-  saveNews, editNewsItem, deleteNewsItem, resetNewsForm,
-  promoteUser, deleteUserFb
-});
-
-// ── GOOGLE SIGN-IN BUTTON у модалках ──
-// додаємо кнопку Google до обох форм
-window.addEventListener('DOMContentLoaded',()=>{
-  const googleBtn = `<div style="margin-top:16px">
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
-      <div style="flex:1;height:1px;background:var(--border)"></div>
-      <span style="font-size:11px;color:var(--muted)">або</span>
-      <div style="flex:1;height:1px;background:var(--border)"></div>
-    </div>
-    <button onclick="doGoogleSignIn()" style="width:100%;padding:11px;background:transparent;border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;gap:10px;font-family:var(--font-body);font-size:13px;font-weight:500;color:var(--text);cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(255,255,255,0.25)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'">
-      <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-      Увійти через Google (@zac.org.ua)
-    </button>
-  </div>`;
-  document.getElementById('modal-login').insertAdjacentHTML('beforeend', googleBtn);
-  document.getElementById('modal-register').insertAdjacentHTML('beforeend', googleBtn);
-});
-</script>
 </body>
 </html>
