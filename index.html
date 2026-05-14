@@ -453,10 +453,30 @@ tr:hover td{background:var(--surface2)}
   </div>
 </div>
 
-<script>
+<!-- Firebase CDN -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, doc, getDocs, getDoc, setDoc, addDoc,
+  deleteDoc, updateDoc, onSnapshot, serverTimestamp, query, orderBy }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBVT8diZtAjGe8f5_YStP7HiRO-B6uOOPU",
+  authDomain: "zafc-games.firebaseapp.com",
+  projectId: "zafc-games",
+  storageBucket: "zafc-games.firebasestorage.app",
+  messagingSenderId: "890011883944",
+  appId: "1:890011883944:web:1282da38b38e7e477d259d"
+};
+
+const fbApp  = initializeApp(firebaseConfig);
+const auth   = getAuth(fbApp);
+const db     = getFirestore(fbApp);
 const DOMAIN = 'zac.org.ua';
 
-// ── DATA ──
+// ── RUNTIME STATE ──
 let GAMES = [
   {id:1,name:'Колонізатори (Catan)',emoji:'🏝️',genre:'strategy',players:'3–4',time:'90 хв',rating:4.8,reviews:24,isNew:false,
    desc:'Класична стратегія на будівництво поселень. Збирай ресурси, будуй дороги й міста, торгуй із суперниками.',
@@ -550,41 +570,39 @@ const PLAYERS = [
 
 const GENRE_LABELS = {strategy:'Стратегія',party:'Вечірка',logic:'Логіка',coop:'Кооператив',card:'Карткова',deduction:'Дедукція'};
 let currentUser = null;
-let nextGameId = 23, nextNewsId = 4, nextUserId = 6;
 
-// HELPERS
-function gl(g){ return GENRE_LABELS[g]||g; }
-function stars(r){ return '★'.repeat(Math.floor(r))+'☆'.repeat(5-Math.floor(r)); }
-function fmtDate(iso){ return new Date(iso).toLocaleDateString('uk-UA',{day:'numeric',month:'long',year:'numeric'}); }
+// ── HELPERS ──
+const gl = g => GENRE_LABELS[g]||g;
+const stars = r => '★'.repeat(Math.floor(r))+'☆'.repeat(5-Math.floor(r));
+const fmtDate = iso => new Date(iso).toLocaleDateString('uk-UA',{day:'numeric',month:'long',year:'numeric'});
 function showToast(msg){ const t=document.createElement('div'); t.className='success-toast'; t.innerHTML='✓ '+msg; document.body.appendChild(t); setTimeout(()=>t.remove(),3000); }
 function showErr(id,m){ const e=document.getElementById(id); e.textContent=m; e.style.display='block'; }
 function hideErr(id){ document.getElementById(id).style.display='none'; }
-
-function gameCard(g, back){
-  return `<a class="game-card" href="#" onclick="showGame(${g.id},'${back}');return false">
+function gameCard(g,back){
+  return `<a class="game-card" href="#" onclick="showGame('${g.id}','${back}');return false">
     <div class="game-cover"><span>${g.emoji}</span>${g.isNew?'<span class="game-badge">НОВА</span>':''}</div>
     <div class="game-info">
       <div class="game-name">${g.name}</div>
       <div class="game-meta"><span>👥 ${g.players}</span><span>⏱ ${g.time}</span></div>
-      <div class="game-rating"><span class="stars">${stars(g.rating)}</span><span class="rating-num">${g.rating} (${g.reviews})</span></div>
+      <div class="game-rating"><span class="stars">${stars(g.rating)}</span><span class="rating-num">${g.rating} (${g.reviews||0})</span></div>
     </div></a>`;
 }
 
-// NAVIGATION
+// ── NAVIGATION ──
 function showPage(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
   if(name==='catalog')renderCatalog();
-  if(name==='admin'){if(!currentUser||currentUser.role!=='admin'){alert('Доступно лише адміністраторам');return;}renderAdmin();}
+  if(name==='admin'){ if(!currentUser||currentUser.role!=='admin'){alert('Доступно лише адміністраторам');return;} renderAdmin(); }
   window.scrollTo(0,0);
 }
 function scrollToSection(id){ showPage('home'); setTimeout(()=>document.getElementById(id)?.scrollIntoView({behavior:'smooth'}),50); }
 
-// HOME
+// ── HOME ──
 let homeGenre='';
 function renderHome(){
   document.getElementById('stat-games').textContent=GAMES.length;
-  document.getElementById('stat-users').textContent=USERS.length;
+  document.getElementById('stat-users').textContent='∞';
   const games=homeGenre?GAMES.filter(g=>g.genre===homeGenre):GAMES;
   document.getElementById('home-games').innerHTML=games.slice(0,8).map(g=>gameCard(g,'home')).join('');
   document.getElementById('players-list').innerHTML=PLAYERS.map((p,i)=>`
@@ -604,7 +622,7 @@ function homeFilter(el,genre){
   document.getElementById('home-games').innerHTML=games.slice(0,8).map(g=>gameCard(g,'home')).join('');
 }
 
-// CATALOG
+// ── CATALOG ──
 function renderCatalog(){
   const q=(document.getElementById('cat-search')?.value||'').toLowerCase();
   const genre=document.getElementById('cat-genre')?.value||'';
@@ -625,7 +643,7 @@ function renderCatalog(){
     '<div style="color:var(--muted);padding:40px;text-align:center;grid-column:1/-1">Нічого не знайдено</div>';
 }
 
-// GAME PAGE
+// ── GAME PAGE ──
 function showGame(id,back='catalog'){
   const g=GAMES.find(x=>x.id===id); if(!g)return;
   document.getElementById('game-back-btn').onclick=()=>showPage(back);
@@ -638,37 +656,76 @@ function showGame(id,back='catalog'){
         <div class="game-page-desc">${g.desc}</div>
         <div class="game-page-props">
           <div><div class="prop-label">Рейтинг</div><div class="prop-val">${g.rating} ${stars(g.rating)}</div></div>
-          <div><div class="prop-label">Відгуків</div><div class="prop-val">${g.reviews}</div></div>
+          <div><div class="prop-label">Відгуків</div><div class="prop-val">${g.reviews||0}</div></div>
         </div>
       </div>
     </div>`;
-  document.getElementById('game-detail-body').innerHTML=`
-    <div class="game-page-body">
-      <div class="rules-block"><h2>Правила гри</h2><div class="rules-text"><p>${g.rules}</p></div></div>
-      <div class="reviews-sidebar">
-        <h2>Відгуки</h2>
-        <div class="review-item"><div class="review-top"><div class="review-avatar">😎</div><div><div class="review-name">Олександр М.</div></div><div class="review-date">10 трав</div></div><div class="review-text">Чудова гра для компанії! Грали цілий вечір.</div></div>
-        ${currentUser?`<div class="review-form" style="margin-top:16px"><textarea placeholder="Твій відгук..."></textarea><button style="width:100%;padding:9px;background:var(--accent);color:#0e0e12;border:none;border-radius:8px;font-family:var(--font-head);font-size:12px;font-weight:700;cursor:pointer">Надіслати відгук</button></div>`:`<div style="text-align:center;padding:16px;font-size:13px;color:var(--muted)"><a href="#" onclick="openModal('login')" style="color:var(--accent)">Увійди</a>, щоб залишити відгук</div>`}
-      </div>
-    </div>`;
+  // load reviews from Firestore
+  const reviewsRef = collection(db,'games',id,'reviews');
+  getDocs(query(reviewsRef,orderBy('createdAt','desc'))).then(snap=>{
+    const items = snap.docs.map(d=>d.data());
+    const reviewsHtml = items.length
+      ? items.map(r=>`<div class="review-item"><div class="review-top"><div class="review-avatar">👤</div><div><div class="review-name">${r.author}</div></div><div class="review-date">${fmtDate(r.date)}</div></div><div class="review-text">${r.text}</div></div>`).join('')
+      : '<div style="font-size:13px;color:var(--muted);padding:8px 0">Відгуків ще немає. Будь першим!</div>';
+    const formHtml = currentUser
+      ? `<div class="review-form" style="margin-top:16px"><textarea id="review-ta" placeholder="Твій відгук..."></textarea><button onclick="submitReview('${id}')" style="width:100%;padding:9px;background:var(--accent);color:#0e0e12;border:none;border-radius:8px;font-family:var(--font-head);font-size:12px;font-weight:700;cursor:pointer">Надіслати відгук</button></div>`
+      : `<div style="text-align:center;padding:16px;font-size:13px;color:var(--muted)"><a href="#" onclick="openModal('login')" style="color:var(--accent)">Увійди</a>, щоб залишити відгук</div>`;
+    document.getElementById('game-detail-body').innerHTML=`
+      <div class="game-page-body">
+        <div class="rules-block"><h2>Правила гри</h2><div class="rules-text"><p>${g.rules||'Правила в процесі заповнення.'}</p></div></div>
+        <div class="reviews-sidebar"><h2>Відгуки</h2>${reviewsHtml}${formHtml}</div>
+      </div>`;
+  });
+  document.getElementById('game-detail-body').innerHTML='<div style="padding:40px;text-align:center;color:var(--muted)">Завантаження...</div>';
   showPage('game');
 }
 
-// AUTH
+async function submitReview(gameId){
+  const ta=document.getElementById('review-ta');
+  const text=ta?.value.trim(); if(!text)return;
+  await addDoc(collection(db,'games',gameId,'reviews'),{
+    text, author:currentUser.displayName||currentUser.email.split('@')[0],
+    date:new Date().toISOString().slice(0,10), createdAt:serverTimestamp()
+  });
+  showToast('Відгук додано!');
+  showGame(gameId,'catalog');
+}
+
+// ── AUTH (Google OAuth) ──
 function openModal(type){ document.getElementById('modal-overlay').classList.add('open'); switchModal(type); }
 function closeModal(){ document.getElementById('modal-overlay').classList.remove('open'); }
 function closeModalOutside(e){ if(e.target.id==='modal-overlay')closeModal(); }
 function switchModal(type){ document.getElementById('modal-login').style.display=type==='login'?'block':'none'; document.getElementById('modal-register').style.display=type==='register'?'block':'none'; }
 
+async function doGoogleSignIn(){
+  hideErr('login-err');
+  const provider = new GoogleAuthProvider();
+  provider.setCustomParameters({hd: DOMAIN}); // підказує Google вибрати акаунт домену
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const fbUser = result.user;
+    if(!fbUser.email.endsWith('@'+DOMAIN)){
+      await signOut(auth);
+      showErr('login-err','Лише акаунти @'+DOMAIN+' мають доступ.');
+      return;
+    }
+    await handleFirebaseUser(fbUser);
+    closeModal();
+  } catch(e){
+    if(e.code!=='auth/popup-closed-by-user') showErr('login-err','Помилка входу: '+e.message);
+  }
+}
+
+// legacy email/pass mock (поки немає Firebase Auth Email — для тестування)
 function doLogin(){
   hideErr('login-err');
   const email=document.getElementById('login-email').value.trim();
   const pass=document.getElementById('login-pass').value;
-  if(!email.endsWith('@'+DOMAIN)){showErr('login-err','Дозволено лише пошту @'+DOMAIN);return;}
-  if(!pass){showErr('login-err','Введи пароль');return;}
-  const u=USERS.find(x=>x.email===email);
-  if(!u){showErr('login-err','Акаунт не знайдено. Спробуй зареєструватись.');return;}
-  loginUser(u);
+  if(!email.endsWith('@'+DOMAIN)){showErr('login-err','Лише @'+DOMAIN);return;}
+  if(pass.length<8){showErr('login-err','Пароль мінімум 8 символів');return;}
+  // create mock user locally (в реальній версії — Firebase Email/Password Auth)
+  const mockUser={uid:'local-'+Date.now(),email,displayName:email.split('@')[0],photoURL:null};
+  handleFirebaseUser(mockUser).then(()=>closeModal());
 }
 function doRegister(){
   hideErr('reg-err');
@@ -677,33 +734,71 @@ function doRegister(){
   const group=document.getElementById('reg-group').value.trim();
   const pass=document.getElementById('reg-pass').value;
   if(!name){showErr('reg-err',"Введи ім'я");return;}
-  if(!email.endsWith('@'+DOMAIN)){showErr('reg-err','Дозволено лише пошту @'+DOMAIN);return;}
+  if(!email.endsWith('@'+DOMAIN)){showErr('reg-err','Лише @'+DOMAIN);return;}
   if(!group){showErr('reg-err','Введи групу або кафедру');return;}
   if(pass.length<8){showErr('reg-err','Пароль мінімум 8 символів');return;}
-  if(USERS.find(x=>x.email===email)){showErr('reg-err','Цей email вже зареєстровано');return;}
-  const u={id:nextUserId++,name,email,group,role:'user',emoji:'👤'};
-  USERS.push(u); loginUser(u); showToast('Реєстрацію виконано!');
+  const mockUser={uid:'local-'+Date.now(),email,displayName:name,photoURL:null,group};
+  handleFirebaseUser(mockUser,{name,group}).then(()=>{ showToast('Реєстрацію виконано!'); closeModal(); });
 }
-function loginUser(u){
-  currentUser=u;
+
+async function handleFirebaseUser(fbUser, extra={}){
+  const uid = fbUser.uid;
+  const userRef = doc(db,'users',uid);
+  const snap = await getDoc(userRef);
+  let userData;
+  if(snap.exists()){
+    userData = snap.data();
+    // оновлюємо ім'я якщо змінилось
+    if(fbUser.displayName && userData.name!==fbUser.displayName){
+      await updateDoc(userRef,{name:fbUser.displayName});
+      userData.name=fbUser.displayName;
+    }
+  } else {
+    // перший вхід — створюємо профіль
+    userData = {
+      uid, email:fbUser.email,
+      name: extra.name||fbUser.displayName||fbUser.email.split('@')[0],
+      group: extra.group||'',
+      role: fbUser.email==='mitin@zac.org.ua' ? 'admin' : 'user',
+      createdAt: serverTimestamp()
+    };
+    await setDoc(userRef, userData);
+  }
+  currentUser = {...userData, uid};
+  applyUserToUI();
+}
+
+function applyUserToUI(){
+  const u=currentUser; if(!u)return;
   document.getElementById('nav-auth').style.display='none';
   document.getElementById('nav-user').style.display='flex';
-  document.getElementById('nav-username').textContent=u.name;
-  document.getElementById('nav-emoji').textContent=u.emoji;
+  document.getElementById('nav-username').textContent=u.name||u.email.split('@')[0];
+  document.getElementById('nav-emoji').textContent='👤';
   const isAdmin=u.role==='admin';
   document.getElementById('nav-admin-badge').style.display=isAdmin?'':'none';
   document.getElementById('nav-admin-btn').style.display=isAdmin?'':'none';
-  closeModal(); renderHome();
+  renderHome();
 }
-function logout(){
+
+async function logout(){
+  try{ await signOut(auth); }catch(e){}
   currentUser=null;
   document.getElementById('nav-auth').style.display='';
   document.getElementById('nav-user').style.display='none';
+  document.getElementById('nav-admin-badge').style.display='none';
+  document.getElementById('nav-admin-btn').style.display='none';
   if(document.querySelector('#page-admin.active'))showPage('home');
   renderHome();
 }
 
-// ADMIN
+// відновлення сесії при перезавантаженні
+onAuthStateChanged(auth, async fbUser=>{
+  if(fbUser && fbUser.email.endsWith('@'+DOMAIN)){
+    await handleFirebaseUser(fbUser);
+  }
+});
+
+// ── ADMIN ──
 function adminTab(el,name){
   document.querySelectorAll('.admin-nav-item').forEach(i=>i.classList.remove('active')); el.classList.add('active');
   document.querySelectorAll('.admin-content-inner').forEach(c=>c.classList.remove('active'));
@@ -715,14 +810,16 @@ function adminTab(el,name){
 }
 function renderAdmin(){ renderAdmDash(); }
 function renderAdmDash(){
-  const rev=GAMES.reduce((s,g)=>s+g.reviews,0);
   document.getElementById('adm-st-games').textContent=GAMES.length;
-  document.getElementById('adm-st-users').textContent=USERS.length;
   document.getElementById('adm-st-news').textContent=NEWS.length;
-  document.getElementById('adm-st-reviews').textContent=rev;
-  document.getElementById('adm-recent-users').innerHTML=USERS.slice().reverse().slice(0,5).map(u=>`
-    <tr><td>${u.name}</td><td style="color:var(--muted);font-size:12px">${u.email}</td><td style="color:var(--muted)">${u.group}</td>
-    <td><span class="user-tag ${u.role}">${u.role==='admin'?'Адмін':'Студент'}</span></td></tr>`).join('');
+  document.getElementById('adm-st-reviews').textContent=GAMES.reduce((s,g)=>s+(g.reviews||0),0);
+  // users count from Firestore
+  getDocs(collection(db,'users')).then(snap=>{
+    document.getElementById('adm-st-users').textContent=snap.size;
+    document.getElementById('adm-recent-users').innerHTML=snap.docs.slice(-5).reverse().map(d=>{const u=d.data();return`
+      <tr><td>${u.name||'—'}</td><td style="color:var(--muted);font-size:12px">${u.email}</td><td style="color:var(--muted)">${u.group||'—'}</td>
+      <td><span class="user-tag ${u.role||'user'}">${u.role==='admin'?'Адмін':'Студент'}</span></td></tr>`;}).join('');
+  });
 }
 function renderAdmGames(){
   document.getElementById('adm-games-count').textContent=`Всього ігор: ${GAMES.length}`;
@@ -731,28 +828,30 @@ function renderAdmGames(){
     <td><span class="td-genre">${gl(g.genre)}</span></td>
     <td style="color:var(--muted)">${g.players}</td><td style="color:var(--muted)">${g.time}</td>
     <td style="color:var(--accent);font-family:var(--font-head);font-size:13px">${g.rating}</td>
-    <td><div class="td-actions"><button class="btn-edit" onclick="editGame(${g.id})">✏️ Ред.</button><button class="btn-del" onclick="deleteGame(${g.id})">🗑</button></div></td></tr>`).join('');
+    <td><div class="td-actions"><button class="btn-edit" onclick="editGame('${g.id}')">✏️ Ред.</button><button class="btn-del" onclick="deleteGame('${g.id}')">🗑</button></div></td></tr>`).join('');
 }
 function renderAdmNews(){
   document.getElementById('adm-news-list').innerHTML=NEWS.map(n=>`
     <div class="news-admin-item">
       <div class="news-admin-body"><div class="news-admin-title">${n.title}</div><div class="news-admin-text">${n.text}</div><div class="news-admin-date">${fmtDate(n.date)}</div></div>
-      <div style="display:flex;flex-direction:column;gap:8px;flex-shrink:0"><button class="btn-edit" onclick="editNews(${n.id})">✏️ Ред.</button><button class="btn-del" onclick="deleteNews(${n.id})">🗑</button></div>
+      <div style="display:flex;flex-direction:column;gap:8px;flex-shrink:0"><button class="btn-edit" onclick="editNewsItem('${n.id}')">✏️ Ред.</button><button class="btn-del" onclick="deleteNewsItem('${n.id}')">🗑</button></div>
     </div>`).join('');
 }
 function renderAdmUsers(){
-  document.getElementById('adm-users-count').textContent=`Користувачів: ${USERS.length}`;
-  document.getElementById('adm-users-table').innerHTML=USERS.map(u=>`
-    <tr><td>${u.name}</td><td style="color:var(--muted);font-size:12px">${u.email}</td><td style="color:var(--muted)">${u.group}</td>
-    <td><span class="user-tag ${u.role}">${u.role==='admin'?'Адмін':'Студент'}</span></td>
-    <td><div class="td-actions">
-      ${u.role!=='admin'?`<button class="btn-edit" onclick="promoteUser(${u.id})">↑ Адмін</button>`:''}
-      ${u.id!==1?`<button class="btn-del" onclick="deleteUser(${u.id})">🗑</button>`:''}
-    </div></td></tr>`).join('');
+  getDocs(collection(db,'users')).then(snap=>{
+    document.getElementById('adm-users-count').textContent=`Користувачів: ${snap.size}`;
+    document.getElementById('adm-users-table').innerHTML=snap.docs.map(d=>{const u={...d.data(),uid:d.id};return`
+      <tr><td>${u.name||'—'}</td><td style="color:var(--muted);font-size:12px">${u.email}</td><td style="color:var(--muted)">${u.group||'—'}</td>
+      <td><span class="user-tag ${u.role||'user'}">${u.role==='admin'?'Адмін':'Студент'}</span></td>
+      <td><div class="td-actions">
+        ${u.role!=='admin'?`<button class="btn-edit" onclick="promoteUser('${u.uid}','${u.name||u.email}')">↑ Адмін</button>`:''}
+        ${u.email!=='mitin@zac.org.ua'?`<button class="btn-del" onclick="deleteUserFb('${u.uid}')">🗑</button>`:''}
+      </div></td></tr>`;}).join('');
+  });
 }
 
-// GAME CRUD
-function saveGame(){
+// ── GAME CRUD (Firestore) ──
+async function saveGame(){
   const name=document.getElementById('f-name').value.trim();
   const emoji=document.getElementById('f-emoji').value.trim()||'🎲';
   const genre=document.getElementById('f-genre').value;
@@ -762,29 +861,39 @@ function saveGame(){
   const desc=document.getElementById('f-desc').value.trim();
   const rules=document.getElementById('f-rules').value.trim();
   const isNew=document.getElementById('f-isnew').value==='true';
-  const editId=parseInt(document.getElementById('f-edit-id').value)||0;
-  if(!name||!players||!time||!desc){alert("Заповни: назва, гравці, час, опис");return;}
+  const editId=document.getElementById('f-edit-id').value;
+  if(!name||!players||!time||!desc){alert('Заповни: назва, гравці, час, опис');return;}
+  const data={name,emoji,genre,players,time,rating,desc,rules,isNew,reviews:0};
   if(editId){
+    await updateDoc(doc(db,'games',editId),{name,emoji,genre,players,time,rating,desc,rules,isNew});
     const i=GAMES.findIndex(g=>g.id===editId);
-    if(i!==-1)GAMES[i]={...GAMES[i],name,emoji,genre,players,time,rating,desc,rules,isNew};
+    if(i!==-1)GAMES[i]={...GAMES[i],...data,id:editId};
     showToast('Гру оновлено!');
   } else {
-    GAMES.push({id:nextGameId++,name,emoji,genre,players,time,rating,reviews:0,isNew,desc,rules});
+    const ref=await addDoc(collection(db,'games'),{...data,createdAt:serverTimestamp()});
+    GAMES.push({...data,id:ref.id});
     showToast('Гру додано!');
   }
   resetGameForm(); renderHome(); renderAdmGames();
 }
 function editGame(id){
   const g=GAMES.find(x=>x.id===id); if(!g)return;
-  ['name','emoji','players','time','rating','desc','rules'].forEach(k=>document.getElementById('f-'+k).value=g[k]||'');
-  document.getElementById('f-genre').value=g.genre;
+  document.getElementById('f-name').value=g.name||'';
+  document.getElementById('f-emoji').value=g.emoji||'';
+  document.getElementById('f-players').value=g.players||'';
+  document.getElementById('f-time').value=g.time||'';
+  document.getElementById('f-rating').value=g.rating||'';
+  document.getElementById('f-desc').value=g.desc||'';
+  document.getElementById('f-rules').value=g.rules||'';
+  document.getElementById('f-genre').value=g.genre||'strategy';
   document.getElementById('f-isnew').value=g.isNew?'true':'false';
   document.getElementById('f-edit-id').value=g.id;
   document.getElementById('game-form-title').textContent='Редагувати гру';
   adminTab(document.querySelector('.admin-nav-item:nth-child(3)'),'add-game');
 }
-function deleteGame(id){
+async function deleteGame(id){
   if(!confirm('Видалити гру?'))return;
+  await deleteDoc(doc(db,'games',id));
   GAMES=GAMES.filter(g=>g.id!==id); renderAdmGames(); renderHome(); showToast('Видалено');
 }
 function resetGameForm(){
@@ -795,24 +904,26 @@ function resetGameForm(){
   document.getElementById('game-form-title').textContent='Додати гру';
 }
 
-// NEWS CRUD
-function saveNews(){
+// ── NEWS CRUD (Firestore) ──
+async function saveNews(){
   const title=document.getElementById('fn-title').value.trim();
   const date=document.getElementById('fn-date').value||new Date().toISOString().slice(0,10);
   const text=document.getElementById('fn-text').value.trim();
-  const editId=parseInt(document.getElementById('fn-edit-id').value)||0;
+  const editId=document.getElementById('fn-edit-id').value;
   if(!title||!text){alert('Заповни заголовок і текст');return;}
   if(editId){
+    await updateDoc(doc(db,'news',editId),{title,date,text});
     const i=NEWS.findIndex(n=>n.id===editId);
     if(i!==-1)NEWS[i]={...NEWS[i],title,date,text};
     showToast('Новину оновлено!');
   } else {
-    NEWS.unshift({id:nextNewsId++,title,date,text});
+    const ref=await addDoc(collection(db,'news'),{title,date,text,createdAt:serverTimestamp()});
+    NEWS.unshift({id:ref.id,title,date,text});
     showToast('Новину опубліковано!');
   }
   resetNewsForm(); renderHome(); renderAdmNews();
 }
-function editNews(id){
+function editNewsItem(id){
   const n=NEWS.find(x=>x.id===id); if(!n)return;
   document.getElementById('fn-title').value=n.title;
   document.getElementById('fn-date').value=n.date;
@@ -821,8 +932,9 @@ function editNews(id){
   document.getElementById('news-form-title').textContent='Редагувати новину';
   adminTab(document.querySelector('.admin-nav-item:nth-child(5)'),'add-news');
 }
-function deleteNews(id){
+async function deleteNewsItem(id){
   if(!confirm('Видалити новину?'))return;
+  await deleteDoc(doc(db,'news',id));
   NEWS=NEWS.filter(n=>n.id!==id); renderAdmNews(); renderHome(); showToast('Видалено');
 }
 function resetNewsForm(){
@@ -833,19 +945,78 @@ function resetNewsForm(){
   document.getElementById('news-form-title').textContent='Додати новину';
 }
 
-// USERS
-function promoteUser(id){
-  const u=USERS.find(x=>x.id===id); if(!u)return;
-  u.role='admin'; renderAdmUsers(); showToast(u.name+' тепер адміністратор');
+// ── USERS (Firestore) ──
+async function promoteUser(uid,name){
+  await updateDoc(doc(db,'users',uid),{role:'admin'});
+  renderAdmUsers(); showToast(name+' тепер адміністратор');
 }
-function deleteUser(id){
+async function deleteUserFb(uid){
   if(!confirm('Видалити користувача?'))return;
-  USERS=USERS.filter(u=>u.id!==id); renderAdmUsers(); renderAdmDash();
+  await deleteDoc(doc(db,'users',uid));
+  renderAdmUsers(); renderAdmDash();
 }
 
-// INIT
+// ── SEED: записуємо дефолтні ігри у Firestore якщо колекція порожня ──
+async function seedIfEmpty(){
+  const snap=await getDocs(collection(db,'games'));
+  if(!snap.empty){
+    GAMES=snap.docs.map(d=>({...d.data(),id:d.id}));
+    renderHome();
+    return;
+  }
+  // перша ініціалізація — записуємо всі дефолтні ігри
+  for(const g of GAMES){
+    const {id,...data}=g;
+    const ref=await addDoc(collection(db,'games'),{...data,createdAt:serverTimestamp()});
+    g.id=ref.id; // оновлюємо id в пам'яті
+  }
+  // записуємо дефолтні новини
+  for(const n of NEWS){
+    const {id,...data}=n;
+    const ref=await addDoc(collection(db,'news'),{...data,createdAt:serverTimestamp()});
+    n.id=ref.id;
+  }
+  renderHome();
+}
+
+// realtime listener для новин
+onSnapshot(query(collection(db,'news'),orderBy('createdAt','desc')), snap=>{
+  NEWS=snap.docs.map(d=>({...d.data(),id:d.id}));
+  if(document.querySelector('#page-home.active'))renderHome();
+  if(document.querySelector('#atab-news.active'))renderAdmNews();
+});
+
+// ── INIT ──
 document.getElementById('fn-date').value=new Date().toISOString().slice(0,10);
 renderHome();
+seedIfEmpty();
+// ── EXPOSE TO GLOBAL SCOPE (потрібно для onclick у HTML) ──
+Object.assign(window,{
+  showPage, scrollToSection, homeFilter, renderCatalog, showGame, submitReview,
+  openModal, closeModal, closeModalOutside, switchModal,
+  doGoogleSignIn, doLogin, doRegister, logout,
+  adminTab, saveGame, editGame, deleteGame, resetGameForm,
+  saveNews, editNewsItem, deleteNewsItem, resetNewsForm,
+  promoteUser, deleteUserFb
+});
+
+// ── GOOGLE SIGN-IN BUTTON у модалках ──
+// додаємо кнопку Google до обох форм
+window.addEventListener('DOMContentLoaded',()=>{
+  const googleBtn = `<div style="margin-top:16px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <div style="flex:1;height:1px;background:var(--border)"></div>
+      <span style="font-size:11px;color:var(--muted)">або</span>
+      <div style="flex:1;height:1px;background:var(--border)"></div>
+    </div>
+    <button onclick="doGoogleSignIn()" style="width:100%;padding:11px;background:transparent;border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;gap:10px;font-family:var(--font-body);font-size:13px;font-weight:500;color:var(--text);cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='rgba(255,255,255,0.25)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'">
+      <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Увійти через Google (@zac.org.ua)
+    </button>
+  </div>`;
+  document.getElementById('modal-login').insertAdjacentHTML('beforeend', googleBtn);
+  document.getElementById('modal-register').insertAdjacentHTML('beforeend', googleBtn);
+});
 </script>
 </body>
 </html>
