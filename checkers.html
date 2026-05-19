@@ -171,6 +171,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
     <div class="waiting-hint">Поділись кодом з суперником</div>
     <div class="waiting-players" id="w-players"></div>
     <div class="waiting-hint" id="w-status">Очікуємо другого гравця...</div>
+    <button class="lobby-btn" id="w-start-btn" onclick="startGame()" style="display:none;margin-bottom:8px">Почати гру</button>
     <button class="lobby-btn secondary" onclick="leaveRoom()">Вийти</button>
   </div>
 </div>
@@ -276,9 +277,8 @@ function listenRoom(){
   roomListener=onValue(roomRef,snap=>{
     if(!snap.exists()){goLobby();return;}
     const room=snap.val();localState=room;
-    if(room.status==='waiting')renderWaiting(room);
-    else if(room.status==='ready'&&isHost)initGame();
-    else if(room.status==='playing')renderGame(room);
+    if(room.status==='waiting'||room.status==='ready') renderWaiting(room);
+    else if(room.status==='playing'){ showScreen('game'); renderGame(room); }
     else if(room.status==='finished')showWin(room);
   });
 }
@@ -296,7 +296,14 @@ function renderWaiting(room){
       :`<div style="color:var(--muted)">Очікуємо...</div><div class="w-color">${c==='w'?'Білі':'Чорні'}</div>`;
     el.appendChild(div);
   });
-  document.getElementById('w-status').textContent=players.length<2?'Очікуємо суперника...':'Суперник підключився!';
+  const ready = players.length >= 2;
+  document.getElementById('w-status').textContent = ready ? 'Суперник підключився!' : 'Очікуємо суперника...';
+  const startBtn = document.getElementById('w-start-btn');
+  if(startBtn) startBtn.style.display = (isHost && ready) ? '' : 'none';
+}
+
+async function startGame(){
+  await initGame();
 }
 
 async function initGame(){
@@ -514,7 +521,7 @@ function goLobby(){
   showScreen('lobby');
 }
 
-Object.assign(window,{lobbyTab,createRoom,joinRoom,leaveRoom,goLobby,playAgain,selectPiece});
+Object.assign(window,{lobbyTab,createRoom,joinRoom,startGame,leaveRoom,goLobby,playAgain,selectPiece});
 document.getElementById('create-name').addEventListener('keydown',e=>{if(e.key==='Enter')createRoom();});
 document.getElementById('join-code').addEventListener('keydown',e=>{if(e.key==='Enter')joinRoom();});
 </script>
