@@ -895,7 +895,6 @@ async function createRoom() {
 
   listenRoom();
   showScreen('waiting');
-  renderWaiting();
 }
 
 async function joinRoom() {
@@ -1280,7 +1279,12 @@ function showWin(room) {
 
 async function playAgain() {
   if (!isHost) { addLog('Тільки хост може почати нову гру', false); return; }
-  await update(ref(db, `rooms/${roomId}`), { status: 'waiting', deck: null, hands: null, discardTop: null, winner: null, log: null });
+  await update(ref(db, `rooms/${roomId}`), {
+    status: 'waiting', deck: null, hands: null,
+    discardTop: null, discardColor: null, winner: null,
+    log: null, currentPlayer: null, direction: null,
+    turnIndex: null, drewCard: null, unoCallers: null
+  });
   showScreen('waiting');
 }
 
