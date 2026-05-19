@@ -341,7 +341,10 @@ function listenRoom(){
     if(!snap.exists()){goLobby();return;}
     const room=snap.val(); localState=room;
     if(room.status==='waiting'||room.status==='ready') renderWaiting(room);
-    else if(room.status==='playing') { showScreen('game'); renderGame(room); }
+    else if(room.status==='playing'){
+      if(!document.querySelector('#screen-game.active')) showScreen('game');
+      if(room.board) renderGame(room);
+    }
     else if(room.status==='finished') showWin(room);
   });
 }
@@ -389,7 +392,7 @@ async function initGame(room){
 
 // ── RENDER GAME ──
 function renderGame(room){
-  if(!room.board)return;
+  if(!room||!room.board||!myColor)return;
   const isMyTurn=room.turn===myColor;
   const flipped=myColor==='b';
 
